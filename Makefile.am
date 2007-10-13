@@ -27,7 +27,7 @@ mtbddclient_LDADD = parser.o -lcudd -lepd -lmtr -lst -lutil @LIBOBJS@
 
 CLEANFILES = logs/* last_id mtbddclient
 MAINTAINERCLEANFILES = parser.cc tokenizer.cc config.h.in~
-EXTRA_DIST = getopt.c getopt1.c getopt.h comp.cfg examples logs LICENSE NOTICE
+EXTRA_DIST = getopt.c getopt1.c comp.cfg examples logs port LICENSE NOTICE
 
 AM_CPPFLAGS = @CPPFLAGS@ -I@CUDDDIR@
 AM_LDFLAGS = @LDFLAGS@ -L@CUDDDIR@
