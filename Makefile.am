@@ -23,13 +23,12 @@ mtbddclient_SOURCES = mtbddclient.cc mtbdd.cc mtbdd.h client.cc client.h strxml.
 
 mdpsim_LDADD = @LIBOBJS@ @PTHREADLIB@
 mdpclient_LDADD = parser.o @LIBOBJS@
+mtbddclient_CPPFLAGS = @CPPFLAGS@ -I@CUDDDIR@
+mtbddclient_LDFLAGS = @LDFLAGS@ -L@CUDDDIR@
 mtbddclient_LDADD = parser.o -lcudd -lepd -lmtr -lst -lutil @LIBOBJS@
 
 CLEANFILES = logs/* last_id mtbddclient
 MAINTAINERCLEANFILES = parser.cc tokenizer.cc config.h.in~
-EXTRA_DIST = getopt.c getopt1.c getopt.h comp.cfg examples logs LICENSE NOTICE
-
-AM_CPPFLAGS = @CPPFLAGS@ -I@CUDDDIR@
-AM_LDFLAGS = @LDFLAGS@ -L@CUDDDIR@
+EXTRA_DIST = getopt.c getopt1.c comp.cfg examples logs port LICENSE NOTICE
 
 AM_YFLAGS = -d
