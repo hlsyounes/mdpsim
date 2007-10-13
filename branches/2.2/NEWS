@@ -1,3 +1,7 @@
+Version 2.2.1 (Oct 13, 2007)
+
+* Fixed configuration issues on Mac reported by Daniel Borrajo.
+
 Version 2.2 (Oct 9, 2007)
 
 * Released under Apache License 2.0.

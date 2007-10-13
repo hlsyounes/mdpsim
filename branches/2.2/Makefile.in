@@ -40,8 +40,8 @@ subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/configure AUTHORS COPYING ChangeLog INSTALL NEWS \
-	config.guess config.sub depcomp getopt.c getopt1.c install-sh \
-	missing mkinstalldirs parser.cc parser.h tokenizer.cc ylwrap
+	depcomp getopt.c getopt1.c install-sh missing mkinstalldirs \
+	parser.cc parser.h tokenizer.cc ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -71,13 +71,18 @@ am_mdpsim_OBJECTS = mdpsim.$(OBJEXT) mdpserver.$(OBJEXT) \
 	tokenizer.$(OBJEXT)
 mdpsim_OBJECTS = $(am_mdpsim_OBJECTS)
 mdpsim_DEPENDENCIES = @LIBOBJS@
-am_mtbddclient_OBJECTS = mtbddclient.$(OBJEXT) mtbdd.$(OBJEXT) \
-	client.$(OBJEXT) strxml.$(OBJEXT) requirements.$(OBJEXT) \
-	rational.$(OBJEXT) types.$(OBJEXT) terms.$(OBJEXT) \
-	predicates.$(OBJEXT) functions.$(OBJEXT) expressions.$(OBJEXT) \
-	formulas.$(OBJEXT) effects.$(OBJEXT) actions.$(OBJEXT) \
-	domains.$(OBJEXT) problems.$(OBJEXT) states.$(OBJEXT) \
-	tokenizer.$(OBJEXT)
+am_mtbddclient_OBJECTS = mtbddclient-mtbddclient.$(OBJEXT) \
+	mtbddclient-mtbdd.$(OBJEXT) mtbddclient-client.$(OBJEXT) \
+	mtbddclient-strxml.$(OBJEXT) \
+	mtbddclient-requirements.$(OBJEXT) \
+	mtbddclient-rational.$(OBJEXT) mtbddclient-types.$(OBJEXT) \
+	mtbddclient-terms.$(OBJEXT) mtbddclient-predicates.$(OBJEXT) \
+	mtbddclient-functions.$(OBJEXT) \
+	mtbddclient-expressions.$(OBJEXT) \
+	mtbddclient-formulas.$(OBJEXT) mtbddclient-effects.$(OBJEXT) \
+	mtbddclient-actions.$(OBJEXT) mtbddclient-domains.$(OBJEXT) \
+	mtbddclient-problems.$(OBJEXT) mtbddclient-states.$(OBJEXT) \
+	mtbddclient-tokenizer.$(OBJEXT)
 mtbddclient_OBJECTS = $(am_mtbddclient_OBJECTS)
 mtbddclient_DEPENDENCIES = parser.o @LIBOBJS@
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I.
@@ -200,12 +205,12 @@ mdpclient_SOURCES = mdpclient.cc client.cc client.h strxml.cc strxml.h requireme
 mtbddclient_SOURCES = mtbddclient.cc mtbdd.cc mtbdd.h client.cc client.h strxml.cc strxml.h requirements.cc requirements.h rational.cc rational.h types.cc types.h terms.cc terms.h predicates.cc predicates.h functions.cc functions.h refcount.h expressions.cc expressions.h formulas.cc formulas.h effects.cc effects.h actions.cc actions.h domains.cc domains.h problems.cc problems.h states.cc states.h tokenizer.ll
 mdpsim_LDADD = @LIBOBJS@ @PTHREADLIB@
 mdpclient_LDADD = parser.o @LIBOBJS@
+mtbddclient_CPPFLAGS = @CPPFLAGS@ -I@CUDDDIR@
+mtbddclient_LDFLAGS = @LDFLAGS@ -L@CUDDDIR@
 mtbddclient_LDADD = parser.o -lcudd -lepd -lmtr -lst -lutil @LIBOBJS@
 CLEANFILES = logs/* last_id mtbddclient
 MAINTAINERCLEANFILES = parser.cc tokenizer.cc config.h.in~
-EXTRA_DIST = getopt.c getopt1.c getopt.h comp.cfg examples logs LICENSE NOTICE
-AM_CPPFLAGS = @CPPFLAGS@ -I@CUDDDIR@
-AM_LDFLAGS = @LDFLAGS@ -L@CUDDDIR@
+EXTRA_DIST = getopt.c getopt1.c comp.cfg examples logs port LICENSE NOTICE
 AM_YFLAGS = -d
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -318,8 +323,24 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdpclient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdpserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdpsim.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbdd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-actions.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-client.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-domains.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-effects.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-expressions.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-formulas.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-functions.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-mtbdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-mtbddclient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-predicates.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-problems.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-rational.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-requirements.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-states.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-strxml.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-terms.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-tokenizer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtbddclient-types.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/predicates.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/problems.Po@am__quote@
@@ -358,6 +379,258 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+mtbddclient-mtbddclient.o: mtbddclient.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-mtbddclient.o -MD -MP -MF "$(DEPDIR)/mtbddclient-mtbddclient.Tpo" -c -o mtbddclient-mtbddclient.o `test -f 'mtbddclient.cc' || echo '$(srcdir)/'`mtbddclient.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-mtbddclient.Tpo" "$(DEPDIR)/mtbddclient-mtbddclient.Po"; else rm -f "$(DEPDIR)/mtbddclient-mtbddclient.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mtbddclient.cc' object='mtbddclient-mtbddclient.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-mtbddclient.o `test -f 'mtbddclient.cc' || echo '$(srcdir)/'`mtbddclient.cc
+
+mtbddclient-mtbddclient.obj: mtbddclient.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-mtbddclient.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-mtbddclient.Tpo" -c -o mtbddclient-mtbddclient.obj `if test -f 'mtbddclient.cc'; then $(CYGPATH_W) 'mtbddclient.cc'; else $(CYGPATH_W) '$(srcdir)/mtbddclient.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-mtbddclient.Tpo" "$(DEPDIR)/mtbddclient-mtbddclient.Po"; else rm -f "$(DEPDIR)/mtbddclient-mtbddclient.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mtbddclient.cc' object='mtbddclient-mtbddclient.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-mtbddclient.obj `if test -f 'mtbddclient.cc'; then $(CYGPATH_W) 'mtbddclient.cc'; else $(CYGPATH_W) '$(srcdir)/mtbddclient.cc'; fi`
+
+mtbddclient-mtbdd.o: mtbdd.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-mtbdd.o -MD -MP -MF "$(DEPDIR)/mtbddclient-mtbdd.Tpo" -c -o mtbddclient-mtbdd.o `test -f 'mtbdd.cc' || echo '$(srcdir)/'`mtbdd.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-mtbdd.Tpo" "$(DEPDIR)/mtbddclient-mtbdd.Po"; else rm -f "$(DEPDIR)/mtbddclient-mtbdd.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mtbdd.cc' object='mtbddclient-mtbdd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-mtbdd.o `test -f 'mtbdd.cc' || echo '$(srcdir)/'`mtbdd.cc
+
+mtbddclient-mtbdd.obj: mtbdd.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-mtbdd.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-mtbdd.Tpo" -c -o mtbddclient-mtbdd.obj `if test -f 'mtbdd.cc'; then $(CYGPATH_W) 'mtbdd.cc'; else $(CYGPATH_W) '$(srcdir)/mtbdd.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-mtbdd.Tpo" "$(DEPDIR)/mtbddclient-mtbdd.Po"; else rm -f "$(DEPDIR)/mtbddclient-mtbdd.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mtbdd.cc' object='mtbddclient-mtbdd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-mtbdd.obj `if test -f 'mtbdd.cc'; then $(CYGPATH_W) 'mtbdd.cc'; else $(CYGPATH_W) '$(srcdir)/mtbdd.cc'; fi`
+
+mtbddclient-client.o: client.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-client.o -MD -MP -MF "$(DEPDIR)/mtbddclient-client.Tpo" -c -o mtbddclient-client.o `test -f 'client.cc' || echo '$(srcdir)/'`client.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-client.Tpo" "$(DEPDIR)/mtbddclient-client.Po"; else rm -f "$(DEPDIR)/mtbddclient-client.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='client.cc' object='mtbddclient-client.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-client.o `test -f 'client.cc' || echo '$(srcdir)/'`client.cc
+
+mtbddclient-client.obj: client.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-client.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-client.Tpo" -c -o mtbddclient-client.obj `if test -f 'client.cc'; then $(CYGPATH_W) 'client.cc'; else $(CYGPATH_W) '$(srcdir)/client.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-client.Tpo" "$(DEPDIR)/mtbddclient-client.Po"; else rm -f "$(DEPDIR)/mtbddclient-client.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='client.cc' object='mtbddclient-client.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-client.obj `if test -f 'client.cc'; then $(CYGPATH_W) 'client.cc'; else $(CYGPATH_W) '$(srcdir)/client.cc'; fi`
+
+mtbddclient-strxml.o: strxml.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-strxml.o -MD -MP -MF "$(DEPDIR)/mtbddclient-strxml.Tpo" -c -o mtbddclient-strxml.o `test -f 'strxml.cc' || echo '$(srcdir)/'`strxml.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-strxml.Tpo" "$(DEPDIR)/mtbddclient-strxml.Po"; else rm -f "$(DEPDIR)/mtbddclient-strxml.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='strxml.cc' object='mtbddclient-strxml.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-strxml.o `test -f 'strxml.cc' || echo '$(srcdir)/'`strxml.cc
+
+mtbddclient-strxml.obj: strxml.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-strxml.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-strxml.Tpo" -c -o mtbddclient-strxml.obj `if test -f 'strxml.cc'; then $(CYGPATH_W) 'strxml.cc'; else $(CYGPATH_W) '$(srcdir)/strxml.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-strxml.Tpo" "$(DEPDIR)/mtbddclient-strxml.Po"; else rm -f "$(DEPDIR)/mtbddclient-strxml.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='strxml.cc' object='mtbddclient-strxml.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-strxml.obj `if test -f 'strxml.cc'; then $(CYGPATH_W) 'strxml.cc'; else $(CYGPATH_W) '$(srcdir)/strxml.cc'; fi`
+
+mtbddclient-requirements.o: requirements.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-requirements.o -MD -MP -MF "$(DEPDIR)/mtbddclient-requirements.Tpo" -c -o mtbddclient-requirements.o `test -f 'requirements.cc' || echo '$(srcdir)/'`requirements.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-requirements.Tpo" "$(DEPDIR)/mtbddclient-requirements.Po"; else rm -f "$(DEPDIR)/mtbddclient-requirements.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='requirements.cc' object='mtbddclient-requirements.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-requirements.o `test -f 'requirements.cc' || echo '$(srcdir)/'`requirements.cc
+
+mtbddclient-requirements.obj: requirements.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-requirements.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-requirements.Tpo" -c -o mtbddclient-requirements.obj `if test -f 'requirements.cc'; then $(CYGPATH_W) 'requirements.cc'; else $(CYGPATH_W) '$(srcdir)/requirements.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-requirements.Tpo" "$(DEPDIR)/mtbddclient-requirements.Po"; else rm -f "$(DEPDIR)/mtbddclient-requirements.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='requirements.cc' object='mtbddclient-requirements.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-requirements.obj `if test -f 'requirements.cc'; then $(CYGPATH_W) 'requirements.cc'; else $(CYGPATH_W) '$(srcdir)/requirements.cc'; fi`
+
+mtbddclient-rational.o: rational.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-rational.o -MD -MP -MF "$(DEPDIR)/mtbddclient-rational.Tpo" -c -o mtbddclient-rational.o `test -f 'rational.cc' || echo '$(srcdir)/'`rational.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-rational.Tpo" "$(DEPDIR)/mtbddclient-rational.Po"; else rm -f "$(DEPDIR)/mtbddclient-rational.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='rational.cc' object='mtbddclient-rational.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-rational.o `test -f 'rational.cc' || echo '$(srcdir)/'`rational.cc
+
+mtbddclient-rational.obj: rational.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-rational.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-rational.Tpo" -c -o mtbddclient-rational.obj `if test -f 'rational.cc'; then $(CYGPATH_W) 'rational.cc'; else $(CYGPATH_W) '$(srcdir)/rational.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-rational.Tpo" "$(DEPDIR)/mtbddclient-rational.Po"; else rm -f "$(DEPDIR)/mtbddclient-rational.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='rational.cc' object='mtbddclient-rational.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-rational.obj `if test -f 'rational.cc'; then $(CYGPATH_W) 'rational.cc'; else $(CYGPATH_W) '$(srcdir)/rational.cc'; fi`
+
+mtbddclient-types.o: types.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-types.o -MD -MP -MF "$(DEPDIR)/mtbddclient-types.Tpo" -c -o mtbddclient-types.o `test -f 'types.cc' || echo '$(srcdir)/'`types.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-types.Tpo" "$(DEPDIR)/mtbddclient-types.Po"; else rm -f "$(DEPDIR)/mtbddclient-types.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='types.cc' object='mtbddclient-types.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-types.o `test -f 'types.cc' || echo '$(srcdir)/'`types.cc
+
+mtbddclient-types.obj: types.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-types.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-types.Tpo" -c -o mtbddclient-types.obj `if test -f 'types.cc'; then $(CYGPATH_W) 'types.cc'; else $(CYGPATH_W) '$(srcdir)/types.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-types.Tpo" "$(DEPDIR)/mtbddclient-types.Po"; else rm -f "$(DEPDIR)/mtbddclient-types.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='types.cc' object='mtbddclient-types.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-types.obj `if test -f 'types.cc'; then $(CYGPATH_W) 'types.cc'; else $(CYGPATH_W) '$(srcdir)/types.cc'; fi`
+
+mtbddclient-terms.o: terms.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-terms.o -MD -MP -MF "$(DEPDIR)/mtbddclient-terms.Tpo" -c -o mtbddclient-terms.o `test -f 'terms.cc' || echo '$(srcdir)/'`terms.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-terms.Tpo" "$(DEPDIR)/mtbddclient-terms.Po"; else rm -f "$(DEPDIR)/mtbddclient-terms.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='terms.cc' object='mtbddclient-terms.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-terms.o `test -f 'terms.cc' || echo '$(srcdir)/'`terms.cc
+
+mtbddclient-terms.obj: terms.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-terms.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-terms.Tpo" -c -o mtbddclient-terms.obj `if test -f 'terms.cc'; then $(CYGPATH_W) 'terms.cc'; else $(CYGPATH_W) '$(srcdir)/terms.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-terms.Tpo" "$(DEPDIR)/mtbddclient-terms.Po"; else rm -f "$(DEPDIR)/mtbddclient-terms.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='terms.cc' object='mtbddclient-terms.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-terms.obj `if test -f 'terms.cc'; then $(CYGPATH_W) 'terms.cc'; else $(CYGPATH_W) '$(srcdir)/terms.cc'; fi`
+
+mtbddclient-predicates.o: predicates.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-predicates.o -MD -MP -MF "$(DEPDIR)/mtbddclient-predicates.Tpo" -c -o mtbddclient-predicates.o `test -f 'predicates.cc' || echo '$(srcdir)/'`predicates.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-predicates.Tpo" "$(DEPDIR)/mtbddclient-predicates.Po"; else rm -f "$(DEPDIR)/mtbddclient-predicates.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='predicates.cc' object='mtbddclient-predicates.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-predicates.o `test -f 'predicates.cc' || echo '$(srcdir)/'`predicates.cc
+
+mtbddclient-predicates.obj: predicates.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-predicates.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-predicates.Tpo" -c -o mtbddclient-predicates.obj `if test -f 'predicates.cc'; then $(CYGPATH_W) 'predicates.cc'; else $(CYGPATH_W) '$(srcdir)/predicates.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-predicates.Tpo" "$(DEPDIR)/mtbddclient-predicates.Po"; else rm -f "$(DEPDIR)/mtbddclient-predicates.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='predicates.cc' object='mtbddclient-predicates.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-predicates.obj `if test -f 'predicates.cc'; then $(CYGPATH_W) 'predicates.cc'; else $(CYGPATH_W) '$(srcdir)/predicates.cc'; fi`
+
+mtbddclient-functions.o: functions.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-functions.o -MD -MP -MF "$(DEPDIR)/mtbddclient-functions.Tpo" -c -o mtbddclient-functions.o `test -f 'functions.cc' || echo '$(srcdir)/'`functions.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-functions.Tpo" "$(DEPDIR)/mtbddclient-functions.Po"; else rm -f "$(DEPDIR)/mtbddclient-functions.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='functions.cc' object='mtbddclient-functions.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-functions.o `test -f 'functions.cc' || echo '$(srcdir)/'`functions.cc
+
+mtbddclient-functions.obj: functions.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-functions.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-functions.Tpo" -c -o mtbddclient-functions.obj `if test -f 'functions.cc'; then $(CYGPATH_W) 'functions.cc'; else $(CYGPATH_W) '$(srcdir)/functions.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-functions.Tpo" "$(DEPDIR)/mtbddclient-functions.Po"; else rm -f "$(DEPDIR)/mtbddclient-functions.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='functions.cc' object='mtbddclient-functions.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-functions.obj `if test -f 'functions.cc'; then $(CYGPATH_W) 'functions.cc'; else $(CYGPATH_W) '$(srcdir)/functions.cc'; fi`
+
+mtbddclient-expressions.o: expressions.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-expressions.o -MD -MP -MF "$(DEPDIR)/mtbddclient-expressions.Tpo" -c -o mtbddclient-expressions.o `test -f 'expressions.cc' || echo '$(srcdir)/'`expressions.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-expressions.Tpo" "$(DEPDIR)/mtbddclient-expressions.Po"; else rm -f "$(DEPDIR)/mtbddclient-expressions.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='expressions.cc' object='mtbddclient-expressions.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-expressions.o `test -f 'expressions.cc' || echo '$(srcdir)/'`expressions.cc
+
+mtbddclient-expressions.obj: expressions.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-expressions.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-expressions.Tpo" -c -o mtbddclient-expressions.obj `if test -f 'expressions.cc'; then $(CYGPATH_W) 'expressions.cc'; else $(CYGPATH_W) '$(srcdir)/expressions.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-expressions.Tpo" "$(DEPDIR)/mtbddclient-expressions.Po"; else rm -f "$(DEPDIR)/mtbddclient-expressions.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='expressions.cc' object='mtbddclient-expressions.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-expressions.obj `if test -f 'expressions.cc'; then $(CYGPATH_W) 'expressions.cc'; else $(CYGPATH_W) '$(srcdir)/expressions.cc'; fi`
+
+mtbddclient-formulas.o: formulas.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-formulas.o -MD -MP -MF "$(DEPDIR)/mtbddclient-formulas.Tpo" -c -o mtbddclient-formulas.o `test -f 'formulas.cc' || echo '$(srcdir)/'`formulas.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-formulas.Tpo" "$(DEPDIR)/mtbddclient-formulas.Po"; else rm -f "$(DEPDIR)/mtbddclient-formulas.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='formulas.cc' object='mtbddclient-formulas.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-formulas.o `test -f 'formulas.cc' || echo '$(srcdir)/'`formulas.cc
+
+mtbddclient-formulas.obj: formulas.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-formulas.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-formulas.Tpo" -c -o mtbddclient-formulas.obj `if test -f 'formulas.cc'; then $(CYGPATH_W) 'formulas.cc'; else $(CYGPATH_W) '$(srcdir)/formulas.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-formulas.Tpo" "$(DEPDIR)/mtbddclient-formulas.Po"; else rm -f "$(DEPDIR)/mtbddclient-formulas.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='formulas.cc' object='mtbddclient-formulas.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-formulas.obj `if test -f 'formulas.cc'; then $(CYGPATH_W) 'formulas.cc'; else $(CYGPATH_W) '$(srcdir)/formulas.cc'; fi`
+
+mtbddclient-effects.o: effects.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-effects.o -MD -MP -MF "$(DEPDIR)/mtbddclient-effects.Tpo" -c -o mtbddclient-effects.o `test -f 'effects.cc' || echo '$(srcdir)/'`effects.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-effects.Tpo" "$(DEPDIR)/mtbddclient-effects.Po"; else rm -f "$(DEPDIR)/mtbddclient-effects.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='effects.cc' object='mtbddclient-effects.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-effects.o `test -f 'effects.cc' || echo '$(srcdir)/'`effects.cc
+
+mtbddclient-effects.obj: effects.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-effects.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-effects.Tpo" -c -o mtbddclient-effects.obj `if test -f 'effects.cc'; then $(CYGPATH_W) 'effects.cc'; else $(CYGPATH_W) '$(srcdir)/effects.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-effects.Tpo" "$(DEPDIR)/mtbddclient-effects.Po"; else rm -f "$(DEPDIR)/mtbddclient-effects.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='effects.cc' object='mtbddclient-effects.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-effects.obj `if test -f 'effects.cc'; then $(CYGPATH_W) 'effects.cc'; else $(CYGPATH_W) '$(srcdir)/effects.cc'; fi`
+
+mtbddclient-actions.o: actions.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-actions.o -MD -MP -MF "$(DEPDIR)/mtbddclient-actions.Tpo" -c -o mtbddclient-actions.o `test -f 'actions.cc' || echo '$(srcdir)/'`actions.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-actions.Tpo" "$(DEPDIR)/mtbddclient-actions.Po"; else rm -f "$(DEPDIR)/mtbddclient-actions.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='actions.cc' object='mtbddclient-actions.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-actions.o `test -f 'actions.cc' || echo '$(srcdir)/'`actions.cc
+
+mtbddclient-actions.obj: actions.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-actions.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-actions.Tpo" -c -o mtbddclient-actions.obj `if test -f 'actions.cc'; then $(CYGPATH_W) 'actions.cc'; else $(CYGPATH_W) '$(srcdir)/actions.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-actions.Tpo" "$(DEPDIR)/mtbddclient-actions.Po"; else rm -f "$(DEPDIR)/mtbddclient-actions.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='actions.cc' object='mtbddclient-actions.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-actions.obj `if test -f 'actions.cc'; then $(CYGPATH_W) 'actions.cc'; else $(CYGPATH_W) '$(srcdir)/actions.cc'; fi`
+
+mtbddclient-domains.o: domains.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-domains.o -MD -MP -MF "$(DEPDIR)/mtbddclient-domains.Tpo" -c -o mtbddclient-domains.o `test -f 'domains.cc' || echo '$(srcdir)/'`domains.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-domains.Tpo" "$(DEPDIR)/mtbddclient-domains.Po"; else rm -f "$(DEPDIR)/mtbddclient-domains.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='domains.cc' object='mtbddclient-domains.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-domains.o `test -f 'domains.cc' || echo '$(srcdir)/'`domains.cc
+
+mtbddclient-domains.obj: domains.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-domains.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-domains.Tpo" -c -o mtbddclient-domains.obj `if test -f 'domains.cc'; then $(CYGPATH_W) 'domains.cc'; else $(CYGPATH_W) '$(srcdir)/domains.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-domains.Tpo" "$(DEPDIR)/mtbddclient-domains.Po"; else rm -f "$(DEPDIR)/mtbddclient-domains.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='domains.cc' object='mtbddclient-domains.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-domains.obj `if test -f 'domains.cc'; then $(CYGPATH_W) 'domains.cc'; else $(CYGPATH_W) '$(srcdir)/domains.cc'; fi`
+
+mtbddclient-problems.o: problems.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-problems.o -MD -MP -MF "$(DEPDIR)/mtbddclient-problems.Tpo" -c -o mtbddclient-problems.o `test -f 'problems.cc' || echo '$(srcdir)/'`problems.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-problems.Tpo" "$(DEPDIR)/mtbddclient-problems.Po"; else rm -f "$(DEPDIR)/mtbddclient-problems.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='problems.cc' object='mtbddclient-problems.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-problems.o `test -f 'problems.cc' || echo '$(srcdir)/'`problems.cc
+
+mtbddclient-problems.obj: problems.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-problems.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-problems.Tpo" -c -o mtbddclient-problems.obj `if test -f 'problems.cc'; then $(CYGPATH_W) 'problems.cc'; else $(CYGPATH_W) '$(srcdir)/problems.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-problems.Tpo" "$(DEPDIR)/mtbddclient-problems.Po"; else rm -f "$(DEPDIR)/mtbddclient-problems.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='problems.cc' object='mtbddclient-problems.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-problems.obj `if test -f 'problems.cc'; then $(CYGPATH_W) 'problems.cc'; else $(CYGPATH_W) '$(srcdir)/problems.cc'; fi`
+
+mtbddclient-states.o: states.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-states.o -MD -MP -MF "$(DEPDIR)/mtbddclient-states.Tpo" -c -o mtbddclient-states.o `test -f 'states.cc' || echo '$(srcdir)/'`states.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-states.Tpo" "$(DEPDIR)/mtbddclient-states.Po"; else rm -f "$(DEPDIR)/mtbddclient-states.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='states.cc' object='mtbddclient-states.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-states.o `test -f 'states.cc' || echo '$(srcdir)/'`states.cc
+
+mtbddclient-states.obj: states.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-states.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-states.Tpo" -c -o mtbddclient-states.obj `if test -f 'states.cc'; then $(CYGPATH_W) 'states.cc'; else $(CYGPATH_W) '$(srcdir)/states.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-states.Tpo" "$(DEPDIR)/mtbddclient-states.Po"; else rm -f "$(DEPDIR)/mtbddclient-states.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='states.cc' object='mtbddclient-states.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-states.obj `if test -f 'states.cc'; then $(CYGPATH_W) 'states.cc'; else $(CYGPATH_W) '$(srcdir)/states.cc'; fi`
+
+mtbddclient-tokenizer.o: tokenizer.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-tokenizer.o -MD -MP -MF "$(DEPDIR)/mtbddclient-tokenizer.Tpo" -c -o mtbddclient-tokenizer.o `test -f 'tokenizer.cc' || echo '$(srcdir)/'`tokenizer.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-tokenizer.Tpo" "$(DEPDIR)/mtbddclient-tokenizer.Po"; else rm -f "$(DEPDIR)/mtbddclient-tokenizer.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='tokenizer.cc' object='mtbddclient-tokenizer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-tokenizer.o `test -f 'tokenizer.cc' || echo '$(srcdir)/'`tokenizer.cc
+
+mtbddclient-tokenizer.obj: tokenizer.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mtbddclient-tokenizer.obj -MD -MP -MF "$(DEPDIR)/mtbddclient-tokenizer.Tpo" -c -o mtbddclient-tokenizer.obj `if test -f 'tokenizer.cc'; then $(CYGPATH_W) 'tokenizer.cc'; else $(CYGPATH_W) '$(srcdir)/tokenizer.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/mtbddclient-tokenizer.Tpo" "$(DEPDIR)/mtbddclient-tokenizer.Po"; else rm -f "$(DEPDIR)/mtbddclient-tokenizer.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='tokenizer.cc' object='mtbddclient-tokenizer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mtbddclient_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mtbddclient-tokenizer.obj `if test -f 'tokenizer.cc'; then $(CYGPATH_W) 'tokenizer.cc'; else $(CYGPATH_W) '$(srcdir)/tokenizer.cc'; fi`
 
 .ll.cc:
 	$(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
