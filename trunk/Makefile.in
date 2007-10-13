@@ -40,8 +40,8 @@ subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/configure AUTHORS COPYING ChangeLog INSTALL NEWS \
-	config.guess config.sub depcomp getopt.c getopt1.c install-sh \
-	missing mkinstalldirs parser.cc parser.h tokenizer.cc ylwrap
+	depcomp getopt.c getopt1.c install-sh missing mkinstalldirs \
+	parser.cc parser.h tokenizer.cc ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -203,7 +203,7 @@ mdpclient_LDADD = parser.o @LIBOBJS@
 mtbddclient_LDADD = parser.o -lcudd -lepd -lmtr -lst -lutil @LIBOBJS@
 CLEANFILES = logs/* last_id mtbddclient
 MAINTAINERCLEANFILES = parser.cc tokenizer.cc config.h.in~
-EXTRA_DIST = getopt.c getopt1.c getopt.h comp.cfg examples logs LICENSE NOTICE
+EXTRA_DIST = getopt.c getopt1.c comp.cfg examples logs port LICENSE NOTICE
 AM_CPPFLAGS = @CPPFLAGS@ -I@CUDDDIR@
 AM_LDFLAGS = @LDFLAGS@ -L@CUDDDIR@
 AM_YFLAGS = -d

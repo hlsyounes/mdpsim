@@ -26,7 +26,7 @@
 #endif
 #include <getopt.h>
 #else
-#include "getopt.h"
+#include "port/getopt.h"
 #endif
 #include <cerrno>
 #include <cstdio>
