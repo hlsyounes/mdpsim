@@ -321,6 +321,7 @@ static void* host_problem(void* arg) {
     while (running && turn <= cfg.turn_limit && !s->goal()) {
       os.str("");
       s->printXML(os);
+      os << std::endl;
       if (log_paths) {
         s->printXML(log_out);
         log_out << std::endl;
@@ -448,6 +449,7 @@ int run_server(int port, long time_limit, int round_limit, int turn_limit) {
 
   int j = 1;
   setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (char*) &j, sizeof(int));
+  setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, (char*) &j, sizeof(int));
 
   addr.sin_family=AF_INET;
   addr.sin_port=htons(port);
