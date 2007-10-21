@@ -110,7 +110,7 @@ static long get_time_milli() {
 
 /* Writes a "bad-problem" error message to the given stream. */
 void LogBadProblem(std::ostream& os, const std::string& problem_name) {
-  os << "<error>bad problem \"" << problem_name << "\"</error>" << std::endl;
+  os << "<error>bad problem \"" << problem_name << "\"</error>";
 }
 
 
@@ -123,7 +123,7 @@ void LogSessionInit(std::ostream& os, int id, const Problem_CFG& cfg) {
      << "<allowed-time>" << cfg.time_limit << "</allowed-time>"
      << "<allowed-turns>" << cfg.turn_limit << "</allowed-turns>"
      << "</setting>"
-     << "</session-init>" << std::endl;
+     << "</session-init>";
 }
 
 
@@ -135,7 +135,7 @@ void LogRoundInit(std::ostream& os,
      << "<round>" << round << "</round>"
      << "<time-left>" << std::max(0, time_left) << "</time-left>"
      << "<rounds-left>" << rounds_left << "</rounds-left>"
-     << "</round-init>" << std::endl;
+     << "</round-init>";
 }
 
 
@@ -147,7 +147,7 @@ void LogActionError(std::ostream& os,
   for (si++; si != params.end(); si++) {
     os << ' ' << *si;
   }
-  os << ")\"</error>" << std::endl;
+  os << ")\"</error>";
 }
 
 
@@ -164,7 +164,7 @@ void LogEndRound(std::ostream& os,
   }
   os << "<time-spent>" << time_spent << "</time-spent>"
      << "<turns-used>" << turns_used << "</turns-used>"
-     << "</end-round>" << std::endl;
+     << "</end-round>";
 }
 
 
@@ -192,7 +192,7 @@ void LogEndSession(std::ostream& os,
     os << "<metric-average>" << total_metric.double_value()/round_limit
        << "</metric-average>";
   }
-  os << "</end-session>" << std::endl;
+  os << "</end-session>";
 }
 
 
@@ -252,6 +252,7 @@ static void* host_problem(void* arg) {
     os.str("");
     LogBadProblem(os, problem_name);
     LogBadProblem(log_out, problem_name);
+    log_out << std::endl;
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
@@ -275,6 +276,7 @@ static void* host_problem(void* arg) {
   os.str("");
   LogSessionInit(os, id, cfg);
   LogSessionInit(log_out, id, cfg);
+  log_out << std::endl;
 #if !HAVE_SSTREAM
   os << '\0';
 #endif
@@ -307,6 +309,7 @@ static void* host_problem(void* arg) {
     os.str("");
     LogRoundInit(os, id, round, time_left, cfg.round_limit - round);
     LogRoundInit(log_out, id, round, time_left, cfg.round_limit - round);
+    log_out << std::endl;
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
@@ -321,7 +324,6 @@ static void* host_problem(void* arg) {
     while (running && turn <= cfg.turn_limit && !s->goal()) {
       os.str("");
       s->printXML(os);
-      os << std::endl;
       if (log_paths) {
         s->printXML(log_out);
         log_out << std::endl;
@@ -358,9 +360,11 @@ static void* host_problem(void* arg) {
           if (action == 0) {
             LogActionError(os, "bad action", params);
             LogActionError(log_out, "bad action", params);
+            log_out << std::endl;
           } else {
             LogActionError(os, "disabled action", params);
             LogActionError(log_out, "disabled action", params);
+            log_out << std::endl;
           }
 #if !HAVE_SSTREAM
           os << '\0';
@@ -410,6 +414,7 @@ static void* host_problem(void* arg) {
     os.str("");
     LogEndRound(os, id, round, *s, time_spent, turns_used);
     LogEndRound(log_out, id, round, *s, time_spent, turns_used);
+    log_out << std::endl;
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
@@ -425,6 +430,7 @@ static void* host_problem(void* arg) {
                 success_count, total_time, total_turns, total_metric);
   LogEndSession(log_out, id, round - 1, cfg.round_limit,
                 success_count, total_time, total_turns, total_metric);
+  log_out << std::endl;
 #if !HAVE_SSTREAM
   os << '\0';
 #endif
