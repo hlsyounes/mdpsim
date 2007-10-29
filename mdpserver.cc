@@ -111,7 +111,7 @@ static long get_time_milli() {
 
 /* Writes a "bad-problem" error message to the given stream. */
 void LogBadProblem(std::ostream& os, const std::string& problem_name) {
-  os << "<error>bad problem \"" << problem_name << "\"</error>";
+  os << "<error>bad problem \"" << problem_name << "\"</error>" << std::endl;
 }
 
 
@@ -124,7 +124,7 @@ void LogSessionInit(std::ostream& os, int id, const Problem_CFG& cfg) {
      << "<allowed-time>" << cfg.time_limit << "</allowed-time>"
      << "<allowed-turns>" << cfg.turn_limit << "</allowed-turns>"
      << "</setting>"
-     << "</session-init>";
+     << "</session-init>" << std::endl;
 }
 
 
@@ -136,7 +136,7 @@ void LogRoundInit(std::ostream& os,
      << "<round>" << round << "</round>"
      << "<time-left>" << std::max(0, time_left) << "</time-left>"
      << "<rounds-left>" << rounds_left << "</rounds-left>"
-     << "</round-init>";
+     << "</round-init>" << std::endl;
 }
 
 
@@ -148,7 +148,7 @@ void LogActionError(std::ostream& os,
   for (si++; si != params.end(); si++) {
     os << ' ' << *si;
   }
-  os << ")\"</error>";
+  os << ")\"</error>" << std::endl;
 }
 
 
@@ -165,7 +165,7 @@ void LogEndRound(std::ostream& os,
   }
   os << "<time-spent>" << time_spent << "</time-spent>"
      << "<turns-used>" << turns_used << "</turns-used>"
-     << "</end-round>";
+     << "</end-round>" << std::endl;
 }
 
 
@@ -193,7 +193,7 @@ void LogEndSession(std::ostream& os,
     os << "<metric-average>" << total_metric.double_value()/round_limit
        << "</metric-average>";
   }
-  os << "</end-session>";
+  os << "</end-session>" << std::endl;
 }
 
 
@@ -210,7 +210,6 @@ static void* host_problem(void* arg) {
 
   const XMLNode* init_node = read_node(client_socket);
   if (init_node == 0 || init_node->getName() != "session-request") {
-    close(client_socket);
     if (init_node != 0) {
       delete init_node;
     }
@@ -220,14 +219,12 @@ static void* host_problem(void* arg) {
   std::string contestant_name;
   if (!init_node->dissect("name", contestant_name)
       || contestant_name.empty()) {
-    close(client_socket);
     delete init_node;
     return 0;
   }
 
   std::string problem_name;
   if (!init_node->dissect("problem", problem_name) || problem_name.empty()) {
-    close(client_socket);
     delete init_node;
     return 0;
   }
@@ -253,12 +250,10 @@ static void* host_problem(void* arg) {
     os.str("");
     LogBadProblem(os, problem_name);
     LogBadProblem(log_out, problem_name);
-    log_out << std::endl;
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
     write(client_socket, os.str().c_str(), os.str().length());
-    close(client_socket);
     return 0;
   }
 
@@ -277,7 +272,6 @@ static void* host_problem(void* arg) {
   os.str("");
   LogSessionInit(os, id, cfg);
   LogSessionInit(log_out, id, cfg);
-  log_out << std::endl;
 #if !HAVE_SSTREAM
   os << '\0';
 #endif
@@ -294,7 +288,6 @@ static void* host_problem(void* arg) {
   while (round <= cfg.round_limit) {
     const XMLNode* roundReq = read_node(client_socket);
     if (roundReq == 0 || roundReq->getName() != "round-request") {
-      close(client_socket);
       if (roundReq != 0) {
         delete roundReq;
       }
@@ -310,7 +303,6 @@ static void* host_problem(void* arg) {
     os.str("");
     LogRoundInit(os, id, round, time_left, cfg.round_limit - round);
     LogRoundInit(log_out, id, round, time_left, cfg.round_limit - round);
-    log_out << std::endl;
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
@@ -325,6 +317,7 @@ static void* host_problem(void* arg) {
     while (running && turn <= cfg.turn_limit && !s->goal()) {
       os.str("");
       s->printXML(os);
+      os << std::endl;
       if (log_paths) {
         s->printXML(log_out);
         log_out << std::endl;
@@ -338,7 +331,6 @@ static void* host_problem(void* arg) {
       const XMLNode* actnode = read_node(client_socket);
       if (actnode == 0) {
         delete s;
-        close(client_socket);
         std::cerr << contestant_name << " in session " << id
                   << " issued invalid XML action; connection killed."
                   << std::endl;
@@ -361,11 +353,9 @@ static void* host_problem(void* arg) {
           if (action == 0) {
             LogActionError(os, "bad action", params);
             LogActionError(log_out, "bad action", params);
-            log_out << std::endl;
           } else {
             LogActionError(os, "disabled action", params);
             LogActionError(log_out, "disabled action", params);
-            log_out << std::endl;
           }
 #if !HAVE_SSTREAM
           os << '\0';
@@ -380,7 +370,6 @@ static void* host_problem(void* arg) {
         }
       } else {
         delete s;
-        close(client_socket);
         std::cerr << contestant_name << " in session " << id
                   << " issued invalid XML action; connection killed."
                   << std::endl;
@@ -415,7 +404,6 @@ static void* host_problem(void* arg) {
     os.str("");
     LogEndRound(os, id, round, *s, time_spent, turns_used);
     LogEndRound(log_out, id, round, *s, time_spent, turns_used);
-    log_out << std::endl;
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
@@ -431,13 +419,10 @@ static void* host_problem(void* arg) {
                 success_count, total_time, total_turns, total_metric);
   LogEndSession(log_out, id, round - 1, cfg.round_limit,
                 success_count, total_time, total_turns, total_metric);
-  log_out << std::endl;
 #if !HAVE_SSTREAM
   os << '\0';
 #endif
   write(client_socket, os.str().c_str(), os.str().length());
-
-  close(client_socket);
 
   std::cout << "session " << id << " complete" << std::endl;
 
