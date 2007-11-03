@@ -21,7 +21,6 @@
 #include "effects.h"
 #include "formulas.h"
 #include "functions.h"
-#include <util.h>
 #include <cudd.h>
 #include <map>
 #include <stdexcept>

@@ -24,6 +24,7 @@
 #include <fstream>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -209,7 +210,6 @@ static void* host_problem(void* arg) {
 
   const XMLNode* init_node = read_node(client_socket);
   if (init_node == 0 || init_node->getName() != "session-request") {
-    close(client_socket);
     if (init_node != 0) {
       delete init_node;
     }
@@ -219,14 +219,12 @@ static void* host_problem(void* arg) {
   std::string contestant_name;
   if (!init_node->dissect("name", contestant_name)
       || contestant_name.empty()) {
-    close(client_socket);
     delete init_node;
     return 0;
   }
 
   std::string problem_name;
   if (!init_node->dissect("problem", problem_name) || problem_name.empty()) {
-    close(client_socket);
     delete init_node;
     return 0;
   }
@@ -256,7 +254,6 @@ static void* host_problem(void* arg) {
     os << '\0';
 #endif
     write(client_socket, os.str().c_str(), os.str().length());
-    close(client_socket);
     return 0;
   }
 
@@ -291,7 +288,6 @@ static void* host_problem(void* arg) {
   while (round <= cfg.round_limit) {
     const XMLNode* roundReq = read_node(client_socket);
     if (roundReq == 0 || roundReq->getName() != "round-request") {
-      close(client_socket);
       if (roundReq != 0) {
         delete roundReq;
       }
@@ -321,6 +317,7 @@ static void* host_problem(void* arg) {
     while (running && turn <= cfg.turn_limit && !s->goal()) {
       os.str("");
       s->printXML(os);
+      os << std::endl;
       if (log_paths) {
         s->printXML(log_out);
         log_out << std::endl;
@@ -334,7 +331,6 @@ static void* host_problem(void* arg) {
       const XMLNode* actnode = read_node(client_socket);
       if (actnode == 0) {
         delete s;
-        close(client_socket);
         std::cerr << contestant_name << " in session " << id
                   << " issued invalid XML action; connection killed."
                   << std::endl;
@@ -374,7 +370,6 @@ static void* host_problem(void* arg) {
         }
       } else {
         delete s;
-        close(client_socket);
         std::cerr << contestant_name << " in session " << id
                   << " issued invalid XML action; connection killed."
                   << std::endl;
@@ -429,8 +424,6 @@ static void* host_problem(void* arg) {
 #endif
   write(client_socket, os.str().c_str(), os.str().length());
 
-  close(client_socket);
-
   std::cout << "session " << id << " complete" << std::endl;
 
   return 0;
@@ -448,6 +441,7 @@ int run_server(int port, long time_limit, int round_limit, int turn_limit) {
 
   int j = 1;
   setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (char*) &j, sizeof(int));
+  setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, (char*) &j, sizeof(int));
 
   addr.sin_family=AF_INET;
   addr.sin_port=htons(port);

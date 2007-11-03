@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-AC_INIT(MDPSim, 2.2.1, hyounes@tempastic.org)
+AC_INIT(MDPSim, 2.2.2, hyounes@tempastic.org)
 AC_CONFIG_SRCDIR(mdpsim.cc)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
