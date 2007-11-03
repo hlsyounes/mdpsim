@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <config.h>
 #include "mtbdd.h"
 #include "problems.h"
 #include "domains.h"
@@ -55,10 +56,10 @@ static struct option long_options[] = {
   { "port", required_argument, 0, 'P' },
   { "verbose", optional_argument, 0, 'v' },
   { "warnings", optional_argument, 0, 'W' },
-  { "help", no_argument, 0, '?' },
+  { "help", no_argument, 0, 'h' },
   { 0, 0, 0, 0 }
 };
-static const char OPTION_STRING[] = "E:G:H:P:v::W::?";
+static const char OPTION_STRING[] = "E:G:H:P:v::W::h";
 
 
 /* Displays help. */
@@ -84,7 +85,7 @@ static void display_help() {
             << "\t\t\t  0 supresses warnings; 1 displays warnings;"
             << std::endl
             << "\t\t\t  2 treats warnings as errors" << std::endl
-            << "  -?     --help\t\t"
+            << "  -h     --help\t\t"
             << "display this help and exit" << std::endl
             << "  file ...\t\t"
             << "files containing domain and problem descriptions;" << std::endl
@@ -194,11 +195,9 @@ int main(int argc, char* argv[]) {
       case 'W':
         warning_level = (optarg != 0) ? atoi(optarg) : 1;
         break;
-      case '?':
-        if (optopt == '?') {
-          display_help();
-          return 0;
-        }
+      case 'h':
+        display_help();
+        return 0;
       case ':':
       default:
         std::cerr << "Try `mtbddclient --help' for more information."

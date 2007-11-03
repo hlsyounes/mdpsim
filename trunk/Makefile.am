@@ -23,8 +23,8 @@ mtbddclient_SOURCES = mtbddclient.cc mtbdd.cc mtbdd.h client.cc client.h strxml.
 
 mdpsim_LDADD = @LIBOBJS@ @PTHREADLIB@
 mdpclient_LDADD = parser.o @LIBOBJS@
-mtbddclient_CPPFLAGS = @CPPFLAGS@ -I@CUDDDIR@
-mtbddclient_LDFLAGS = @LDFLAGS@ -L@CUDDDIR@
+mtbddclient_CPPFLAGS = @CPPFLAGS@ -I"@CUDDDIR@/include"
+mtbddclient_LDFLAGS = @LDFLAGS@ -L"@CUDDDIR@/cudd" -L"@CUDDDIR@/epd" -L"@CUDDDIR@/mtr" -L"@CUDDDIR@/st" -L"@CUDDDIR@/util"
 mtbddclient_LDADD = parser.o -lcudd -lepd -lmtr -lst -lutil @LIBOBJS@
 
 CLEANFILES = logs/* last_id mtbddclient

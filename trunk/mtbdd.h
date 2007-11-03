@@ -21,7 +21,6 @@
 #include <config.h>
 #include "client.h"
 #include <cudd.h>
-#include <util.h>
 
 
 /* ====================================================================== */
