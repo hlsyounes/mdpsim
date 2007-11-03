@@ -1,0 +1,46 @@
+Version 2.2.2 (Nov 2, 2007)
+
+* Added newline character to state message (was removed in version
+  2.0---should not be needed, but it seems that some clients rely on it being
+  present, so it was added for backward compatibility).
+
+* Set TCP_NODELAY to optimize socket communication for small messages.
+
+* Updated protocol description in README to match implementation.
+
+* Fixed problem with lost server messages at the end of a session.
+
+* Simplified configuration of CUDDDIR (no need to place library files in a
+  single directory anymore---CUDDDIR can just be set of base directory of cudd
+  package).  Also fixed compilation of mtbddclient on Cygwin.
+
+Version 2.2.1 (Oct 13, 2007)
+
+* Fixed configuration issues on Mac reported by Daniel Borrajo.
+
+Version 2.2 (Oct 9, 2007)
+
+* Released under Apache License 2.0.
+
+* Source code now hosted at Google Code (http://mdpsim.googlecode.com/).
+
+
+Version 2.1 (Sep 29, 2007)
+
+* Added log-dir flag and logging of turn-average (from IPC-5 server).
+
+* Added optional logging of execution paths.
+
+
+Version 2.0 (Sep 9, 2005)
+
+* Fixed memory leaks in server.
+
+* Removed instantiation of goals for better support of quantified goals.
+
+* Implemented PPDDL->DBN conversion in mtbddclient.
+
+
+Version 1.0 (Sep 19, 2003)
+
+* Initial release.
