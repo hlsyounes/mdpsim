@@ -194,12 +194,13 @@ static bool parse_node(int fd, PSink& ps) {
 
 
 void PSink::pushNode(const std::string& name, const str_pair_vec& params) {
-  //cout << "push: " << name << endl;
+  //std::cout << "push: " << name << std::endl;
   XMLParent *p = new XMLParent(name);
   for (size_t i=0; i<params.size(); i++) {
     p->params[params[i].first] = params[i].second;
   }
   if (s.empty()) {
+      if (top != NULL) delete top;
     top = p;
   } else {
     s.top()->children.push_back(p);
@@ -209,12 +210,13 @@ void PSink::pushNode(const std::string& name, const str_pair_vec& params) {
 
 
 void PSink::popNode(const std::string& name) {
-  //cout << "pop: " << name << endl;
+  //std::cout << "pop: " << name << std::endl;
   s.pop();
 }
 
 
 void PSink::pushText(const std::string& text) {
+  //std::cout << "pushText: " << text << std::endl;
   XMLText *t = new XMLText(text);
   if (s.size() == 0) {
     top = t;

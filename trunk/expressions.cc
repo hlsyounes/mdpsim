@@ -146,6 +146,7 @@ const Expression& Fluent::instantiation(const SubstitutionMap& subst,
       if (vi != values.end()) {
         return *new Value((*vi).second);
       } else {
+	std::cerr<<"fluent: "<<*this<<std::endl;
         throw std::logic_error("value of static fluent is undefined");
       }
     } else {
@@ -178,6 +179,7 @@ const Expression& Fluent::instantiation(const SubstitutionMap& subst,
         if (vi != values.end()) {
           return *new Value((*vi).second);
         } else {
+	  std::cerr<<"fluent: "<<inst_fluent<<std::endl;
           throw std::logic_error("value of static fluent is undefined");
         }
       } else {
