@@ -55,11 +55,16 @@ State::State(const Problem& problem)
 
 /* Returns a sampled successor of this state. */
 const State& State::next(const Action& action) const {
+    return next(action, NULL);
+}
+
+/* Returns a sampled successor of this state. */
+const State& State::next(const Action& action, std::ostream* changes) const {
   State* next_state = new State(*this);
   if (verbosity > 1) {
     std::cerr << "selected action: " << action << std::endl;
   }
-  action.affect(problem().terms(), next_state->atoms_, next_state->values_);
+  action.affect(problem().terms(), next_state->atoms_, next_state->values_, changes);
   next_state->goal_ = problem().goal().holds(problem().terms(),
                                              next_state->atoms_,
                                              next_state->values_);
@@ -94,12 +99,7 @@ void State::printXML(std::ostream& os) const {
        ai != atoms().end(); ai++) {
     const Atom& atom = **ai;
     if (!PredicateTable::static_predicate(atom.predicate())) {
-      os << "<atom><predicate>" << atom.predicate() << "</predicate>";
-      for (TermList::const_iterator ti = atom.terms().begin();
-           ti != atom.terms().end(); ti++) {
-        os << "<term>" << *ti << "</term>";
-      }
-      os << "</atom>";
+      atom.printXML(os);
     }
   }
   for (ValueMap::const_iterator vi = values().begin();
@@ -108,11 +108,8 @@ void State::printXML(std::ostream& os) const {
     if (fluent.function() != problem().domain().total_time()
         && fluent.function() != problem().domain().goal_achieved()
         && !FunctionTable::static_function(fluent.function())) {
-      os << "<fluent><function>" << fluent.function() << "</function>";
-      for (TermList::const_iterator ti = fluent.terms().begin();
-           ti != fluent.terms().end(); ti++) {
-        os << "<term>" << *ti << "</term>";
-      }
+      os << "<fluent>";
+      fluent.printXML(os);
       os << "<value>" << vi->second << "</value>";
       os << "</fluent>";
     }
