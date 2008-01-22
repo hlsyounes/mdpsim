@@ -198,6 +198,15 @@ bool Atom::AtomLess::operator()(const Atom* a1, const Atom* a2) const {
   }
 }
 
+/* Comparison (equality) function. */
+bool Atom::AtomEqual::operator()(const Atom* a1, const Atom* a2) const {
+  if (a1->predicate() != a2->predicate()) {
+    return false;
+  } else {
+    return a1->terms() == a2->terms();
+  }
+}
+
 
 /* Returns an atom with the given predicate and terms. */
 const Atom& Atom::make(Predicate predicate, const TermList& terms) {
@@ -324,6 +333,16 @@ void Atom::print(std::ostream& os) const {
     os << ' ' << *ti;
   }
   os << ')';
+}
+
+/* Prints this object on the given stream in XML format. */
+void Atom::printXML(std::ostream& os) const {
+  os << "<atom><predicate>" << predicate() << "</predicate>";
+  for (TermList::const_iterator ti = terms().begin();
+       ti != terms().end(); ti++) {
+    os << "<term>" << *ti << "</term>";
+  }
+  os << "</atom>";
 }
 
 

@@ -128,6 +128,9 @@ struct Atom : public StateFormula {
                                             const ValueMap& values,
                                             bool state) const;
 
+  /* Prints this object on the given stream in XML format. */
+  void printXML(std::ostream& os) const;
+
  protected:
   /* Prints this object on the given stream. */
   virtual void print(std::ostream& os) const;
@@ -135,6 +138,13 @@ struct Atom : public StateFormula {
  private:
   /* Less-than comparison function object for atoms. */
   struct AtomLess
+    : public std::binary_function<const Atom*, const Atom*, bool> {
+    /* Comparison function. */
+    bool operator()(const Atom* a1, const Atom* a2) const;
+  };
+
+  /* Equal-to comparison function object for atoms. */
+  struct AtomEqual
     : public std::binary_function<const Atom*, const Atom*, bool> {
     /* Comparison function. */
     bool operator()(const Atom* a1, const Atom* a2) const;

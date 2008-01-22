@@ -116,6 +116,9 @@ struct Fluent : public Expression {
   virtual const Expression& instantiation(const SubstitutionMap& subst,
                                           const ValueMap& values) const;
 
+  /* Prints this object on the given stream in XML format. */
+  void printXML(std::ostream& os) const;
+
  protected:
   /* Prints this object on the given stream. */
   virtual void print(std::ostream& os) const;

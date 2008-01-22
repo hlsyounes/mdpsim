@@ -68,6 +68,11 @@ Rational::Rational(int n, int m) {
 Rational::Rational(const char* s)
   : numerator_(0) {
   const char* si = s;
+  int sign = 1;
+  if (*si == '-') {
+      sign = -1;
+      si++;
+  }
   for (; *si != '\0' && *si != '.' && *si != '/'; si++) {
     numerator_ = 10*numerator_ + (*si - '0');
   }
@@ -97,6 +102,7 @@ Rational::Rational(const char* s)
   } else {
     denominator_ = 1;
   }
+  numerator_ *= sign;
 }
 
 

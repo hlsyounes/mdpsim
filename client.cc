@@ -173,37 +173,99 @@ static const Fluent* getFluent(const Problem& problem,
 
 
 /* Extracts a state from the given XML node. */
-static bool getState(AtomSet& atoms, ValueMap& values,
+static bool getStateFull(AtomSet& atoms, ValueMap& values,
                      const Problem& problem, const XMLNode* stateNode) {
-  if (stateNode == 0) {
-    return false;
-  }
-  if (stateNode->getName() != "state") {
-    return false;
-  }
+
+  atoms.clear();
+  values.clear();
 
   for (int i = 0; i < stateNode->size(); i++) {
-    const XMLNode* cn = stateNode->getChild(i);
-    if (cn->getName() == "atom") {
-      const Atom* atom = getAtom(problem, cn);
-      if (atom != 0) {
-        atoms.insert(atom);
-        RCObject::ref(atom);
+      const XMLNode* cn = stateNode->getChild(i);
+      if (cn->getName() == "atom") {
+	  const Atom* atom = getAtom(problem, cn);
+	  if (atom != 0) {
+	      atoms.insert(atom);
+	      RCObject::ref(atom);
+	  }
       }
-    }
-    else if (cn->getName() == "fluent") {
-      const Fluent* fluent = getFluent(problem, cn);
-      std::string value_str;
-      if (!cn->dissect("value", value_str))
-        return false;
-      values.insert(std::make_pair(fluent, Rational(value_str.c_str())));
-      RCObject::ref(fluent);
-    }
+      else if (cn->getName() == "fluent") {
+	  const Fluent* fluent = getFluent(problem, cn);
+	  std::string value_str;
+	  if (!cn->dissect("value", value_str))
+	      return false;
+	  values.insert(std::make_pair(fluent, Rational(value_str.c_str())));
+	    ValueMap::iterator ret;
+	  RCObject::ref(fluent);
+      }
   }
 
   return true;
 }
 
+static bool getStateChange(AtomSet& atoms, ValueMap& values,
+                     const Problem& problem, const XMLNode* stateNode) {
+
+    for (int i = 0; i < stateNode->size(); i++) {
+	const XMLNode* cn = stateNode->getChild(i);
+	if (cn->getName() == "add") {
+	    for (int j = 0; j < cn->size(); j++) {
+		const XMLNode* gcn = cn->getChild(j);
+		const Atom* atom = getAtom(problem, gcn);
+		if (atom != 0) {
+		    std::pair<AtomSet::iterator,bool> ret;
+		    ret = atoms.insert(atom);
+		    if(ret.second)
+			RCObject::ref(atom);
+		}
+	    }
+	}
+	else
+	if (cn->getName() == "del") {
+	    for (int j = 0; j < cn->size(); j++) {
+		const XMLNode* gcn = cn->getChild(j);
+		const Atom* atom = getAtom(problem, gcn);
+		if (atom != 0) {
+		    AtomSet::iterator ret;
+		    ret = atoms.find(atom);
+		    if (ret != atoms.end()) {
+			atoms.erase(ret);
+			RCObject::destructive_deref(atom);
+		    }
+		}
+	    }
+	}
+	else if (cn->getName() == "fluent") {
+	    const Fluent* fluent = getFluent(problem, cn);
+	    std::string value_str;
+	    if (!cn->dissect("value", value_str))
+		return false;
+	    ValueMap::iterator ret;
+	    ret = values.find(fluent);
+	    RCObject::ref(fluent);
+	    if (ret != values.end()) {
+		values.erase(ret);
+		RCObject::destructive_deref(fluent);
+	    }
+	    values.insert(std::make_pair(fluent, Rational(value_str.c_str())));
+	    ret = values.find(fluent);
+	}
+    }
+
+  return true;
+}
+
+static bool getState(AtomSet& atoms, ValueMap& values,
+                     const Problem& problem, const XMLNode* stateNode) {
+  if (stateNode == 0) {
+    return false;
+  }
+  if (stateNode->getName() == "state") 
+      return getStateFull(atoms, values, problem, stateNode);
+  else if (stateNode->getName() == "state-change")
+      return getStateChange(atoms, values, problem, stateNode);
+  
+  return false;
+}
 
 /* Sends an action on the given stream. */
 static void sendAction(std::ostream& os, const Action* action) {
@@ -225,13 +287,15 @@ static void sendAction(std::ostream& os, const Action* action) {
 
 /* Constructs an XML client */
 XMLClient::XMLClient(Planner& planner, const Problem& problem,
-                     const std::string& name, int fd) {
+                     const std::string& name, int fd, bool light_com) {
   std::ostringstream os;
   os.str("");
   os << "<session-request>"
      <<  "<name>" << name << "</name>"
-     <<  "<problem>" << problem.name() << "</problem>"
-     << "</session-request>";
+     <<  "<problem>" << problem.name() << "</problem>";
+  if (light_com)
+      os << "<light-com/>";
+  os << "</session-request>";
 #if !HAVE_SSTREAM
   os << '\0';
 #endif
@@ -277,6 +341,8 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
     planner.initRound();
 
     const XMLNode* response = 0;
+    AtomSet atoms;
+    ValueMap values;
     while (1) {
 
       if (response != 0) {
@@ -296,8 +362,6 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
         break;
       }
 
-      AtomSet atoms;
-      ValueMap values;
       if (!getState(atoms, values, problem, response)) {
         std::cerr << "Invalid state response: " << response << std::endl;
         delete response;
@@ -305,13 +369,15 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
       }
 
       const Action *a = planner.decideAction(atoms, values);
-      for (AtomSet::const_iterator ai = atoms.begin();
-           ai != atoms.end(); ai++) {
-        RCObject::destructive_deref(*ai);
-      }
-      for (ValueMap::const_iterator vi = values.begin();
-           vi != values.end(); vi++) {
-        RCObject::destructive_deref((*vi).first);
+      if (!light_com) {
+	  for (AtomSet::const_iterator ai = atoms.begin();
+	       ai != atoms.end(); ai++) {
+	      RCObject::destructive_deref(*ai);
+	  }
+	  for (ValueMap::const_iterator vi = values.begin();
+	       vi != values.end(); vi++) {
+	      RCObject::destructive_deref((*vi).first);
+	  }
       }
 
       os.str("");

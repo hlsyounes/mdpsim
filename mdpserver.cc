@@ -229,6 +229,12 @@ static void* host_problem(void* arg) {
     return 0;
   }
 
+  bool light_com = (init_node->getChild("light-com"));
+  if (light_com)
+      std::cerr<<"LIGHT-COM on"<<std::endl;
+  else
+      std::cerr<<"LIGHT-COM off"<<std::endl;
+
   delete init_node;
 
   int id = new_id();
@@ -314,13 +320,23 @@ static void* host_problem(void* arg) {
     bool running = time_left > 0;
     int turn = 1;
     long start_time = get_time_milli();
+    std::stringstream* changes = NULL;
+    if (light_com)
+	changes = new std::stringstream;
     while (running && turn <= cfg.turn_limit && !s->goal()) {
       os.str("");
-      s->printXML(os);
-      os << std::endl;
-      if (log_paths) {
-        s->printXML(log_out);
-        log_out << std::endl;
+      if ((turn == 1) | (!light_com)) {
+	  s->printXML(os);
+	  os << std::endl;
+	  if (log_paths) {
+	      s->printXML(log_out);
+	      log_out << std::endl;
+	  }
+      } else {
+	  os << changes->str() << std::endl;
+	  if (log_paths) {
+	      log_out << changes->str() << std::endl;
+	  }
       }
 #if !HAVE_SSTREAM
       os << '\0';
@@ -382,13 +398,18 @@ static void* host_problem(void* arg) {
         running = false;
       }
 
+      if (light_com)
+	  changes->str("");
       if (running) {
-        const State& next_s = s->next(*action);
+	  const State& next_s = s->next(*action, changes);
         delete s;
         s = &next_s;
         turn++;
       }
     }
+
+    if (light_com)
+	delete changes;
 
     total_metric = total_metric + problem->metric().value(s->values());
 

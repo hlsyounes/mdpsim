@@ -202,6 +202,15 @@ void Fluent::print(std::ostream& os) const {
   os << ')';
 }
 
+/* Prints this object on the given stream in XML format. */
+void Fluent::printXML(std::ostream& os) const {
+    os << "<function>" << function() << "</function>";
+    for (TermList::const_iterator ti = terms().begin();
+	 ti != terms().end(); ti++) {
+	os << "<term>" << *ti << "</term>";
+  }
+}
+
 
 /* ====================================================================== */
 /* Computation */

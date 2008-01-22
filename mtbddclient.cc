@@ -54,12 +54,13 @@ static struct option long_options[] = {
   { "discount-factor", required_argument, 0, 'G' },
   { "host", required_argument, 0, 'H' },
   { "port", required_argument, 0, 'P' },
+  { "lightcoms", no_argument, 0, 'l' },
   { "verbose", optional_argument, 0, 'v' },
   { "warnings", optional_argument, 0, 'W' },
   { "help", no_argument, 0, 'h' },
   { 0, 0, 0, 0 }
 };
-static const char OPTION_STRING[] = "E:G:H:P:v::W::h";
+static const char OPTION_STRING[] = "E:G:H:P:lv::W::h";
 
 
 /* Displays help. */
@@ -74,6 +75,8 @@ static void display_help() {
             << "connect to host h" << std::endl
             << "  -P p,  --port=p\t"
             << "connect to port p" << std::endl
+	    << "  -l, --lightcoms"
+	    << "light communications\t" << std::endl
             << "  -v[n], --verbose[=n]\t"
             << "use verbosity level n;" << std::endl
             << "\t\t\t  n is a number from 0 (verbose mode off) and up;"
@@ -155,6 +158,8 @@ int main(int argc, char* argv[]) {
   std::string host;
   /* Port. */
   int port = 0;
+  /* Light communications. */
+  bool light_com = false;
 
   try {
     /*
@@ -189,6 +194,9 @@ int main(int argc, char* argv[]) {
       case 'P':
         port = atoi(optarg);
         break;
+      case 'l':
+        light_com = true;
+	break;
       case 'v':
         verbosity = (optarg != 0) ? atoi(optarg) : 1;
         break;
@@ -263,7 +271,7 @@ int main(int argc, char* argv[]) {
       const Problem& problem = *(*pi).second;
       MTBDDPlanner planner(problem, gamma, epsilon);
       if (port > 0) {
-        XMLClient(planner, problem, "mtbddclient", socket);
+	  XMLClient(planner, problem, "mtbddclient", socket, light_com);
       } else {
         planner.initRound();
       }
