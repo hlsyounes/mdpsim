@@ -147,7 +147,7 @@ struct Action {
                const AtomSet& atoms, const ValueMap& values) const;
 
   /* Changes the given state according to the effects of this action. */
-  void affect(const TermTable& terms, AtomSet& atoms, ValueMap& values) const;
+  void affect(const TermTable& terms, AtomSet& atoms, ValueMap& values, std::ostream* changes) const;
 
  private:
   /* Action name. */

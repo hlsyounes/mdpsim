@@ -205,7 +205,7 @@ bool Action::enabled(const TermTable& terms,
 
 /* Changes the given state according to the effects of this action. */
 void Action::affect(const TermTable& terms,
-                    AtomSet& atoms, ValueMap& values) const {
+                    AtomSet& atoms, ValueMap& values, std::ostream* changes) const {
   AtomList adds;
   AtomList deletes;
   UpdateList updates;
@@ -215,9 +215,36 @@ void Action::affect(const TermTable& terms,
     atoms.erase(*ai);
   }
   atoms.insert(adds.begin(), adds.end());
+
+  if (changes != NULL) {
+      *changes << "<state-change>";
+      for (AtomList::const_iterator ai = deletes.begin();
+	   ai != deletes.end(); ai++) {
+	  *changes << "<del>";
+	  (*ai)->printXML(*changes);	  
+	  *changes << "</del>";
+      }
+      for (AtomList::const_iterator ai = adds.begin();
+	   ai != adds.end(); ai++) {
+	  *changes << "<add>";
+	  (*ai)->printXML(*changes);
+	  *changes << "</add>";
+      }
+  }
+  
   for (UpdateList::const_iterator ui = updates.begin();
        ui != updates.end(); ui++) {
-    (*ui)->affect(values);
+      (*ui)->affect(values);
+      if (changes != NULL) {
+	  *changes << "<fluent>";
+	  (*ui)->fluent().printXML(*changes);
+	  *changes << "<value>" << values[&(*ui)->fluent()] << "</value>";
+	  *changes << "</fluent>";
+      }
+  }
+ 
+  if (changes != NULL) {
+      *changes << "</state-change>";
   }
 }
 
