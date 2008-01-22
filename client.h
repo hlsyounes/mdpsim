@@ -64,7 +64,7 @@ protected:
 struct XMLClient {
   /* Constructs an XML client. */
   XMLClient(Planner& planner, const Problem& problem, const std::string& name,
-            int fd);
+            int fd, bool light_com);
 };
 
 

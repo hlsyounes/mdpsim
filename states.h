@@ -52,6 +52,7 @@ struct State {
 
   /* Returns a sampled successor of this state. */
   const State& next(const Action& action) const;
+  const State& next(const Action& action, std::ostream* changes) const;
 
   /* Prints this object on the given stream in XML. */
   void printXML(std::ostream& os) const;
