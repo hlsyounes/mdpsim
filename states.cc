@@ -98,7 +98,9 @@ void State::printXML(std::ostream& os) const {
   for (AtomSet::const_iterator ai = atoms().begin();
        ai != atoms().end(); ai++) {
     const Atom& atom = **ai;
-    if (!PredicateTable::static_predicate(atom.predicate())) {
+    if ( (!PredicateTable::static_predicate(atom.predicate())) &&
+	 (!atom.predicate().isPartiallyObservable())
+	 ) {
       atom.printXML(os);
     }
   }
@@ -107,7 +109,9 @@ void State::printXML(std::ostream& os) const {
     const Fluent& fluent = *vi->first;
     if (fluent.function() != problem().domain().total_time()
         && fluent.function() != problem().domain().goal_achieved()
-        && !FunctionTable::static_function(fluent.function())) {
+        && !FunctionTable::static_function(fluent.function())
+	&& !fluent.function().isPartiallyObservable()
+	) {
       os << "<fluent>";
       fluent.printXML(os);
       os << "<value>" << vi->second << "</value>";

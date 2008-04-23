@@ -54,6 +54,8 @@ struct Requirements {
   bool probabilistic_effects;
   /* Whether support for rewards is required. */
   bool rewards;
+  /* Whether support for partial observability is required. */
+  bool partial_observability;
 
   /* Constructs a default requirements object. */
   Requirements();

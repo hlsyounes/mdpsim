@@ -57,8 +57,8 @@ void Domain::clear() {
 
 /* Constructs an empty domain with the given name. */
 Domain::Domain(const std::string& name)
-  : name_(name), total_time_(functions_.add_function("total-time")),
-    goal_achieved_(functions_.add_function("goal-achieved")) {
+    : name_(name), total_time_(functions_.add_function("total-time", false)),
+      goal_achieved_(functions_.add_function("goal-achieved", false)) {
   const Domain* d = find(name);
   if (d != 0) {
     delete d;

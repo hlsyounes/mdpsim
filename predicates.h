@@ -35,16 +35,22 @@
  */
 struct Predicate {
   /* Constructs a predicate. */
-  explicit Predicate(int index) : index_(index) {}
+  explicit Predicate(int index, bool partiallyObservable) : index_(index), partiallyObservable_(partiallyObservable) {}
 
  private:
   /* Predicate index. */
   int index_;
 
+  /* Is this predicate partially observable ? */
+  bool partiallyObservable_;
+
   friend bool operator==(const Predicate& p1, const Predicate& p2);
   friend bool operator<(const Predicate& p1, const Predicate& p2);
   friend std::ostream& operator<<(std::ostream& os, const Predicate& p);
   friend struct PredicateTable;
+
+ public:
+  bool isPartiallyObservable() const { return partiallyObservable_; };
 };
 
 /* Equality operator for predicates. */
@@ -98,7 +104,7 @@ struct PredicateTable {
 
   /* Adds a predicate with the given name to this table and returns
      the predicate. */
-  const Predicate& add_predicate(const std::string& name);
+  const Predicate& add_predicate(const std::string& name, const bool partially_observable);
 
   /* Returns a pointer to the predicate with the given name, or 0 if
      no predicate with the given name exists. */

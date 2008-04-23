@@ -70,9 +70,9 @@ bool FunctionTable::static_function(const Function& function) {
 
 /* Adds a function with the given name to this table and returns the
    function. */
-const Function& FunctionTable::add_function(const std::string& name) {
+const Function& FunctionTable::add_function(const std::string& name, const bool partiallyObservable) {
   std::pair<std::map<std::string, Function>::const_iterator, bool> fi =
-    functions_.insert(std::make_pair(name, Function(names_.size())));
+      functions_.insert(std::make_pair(name, Function(names_.size(), partiallyObservable)));
   const Function& function = (*fi.first).second;
   names_.push_back(name);
   parameters_.push_back(TypeList());

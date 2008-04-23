@@ -37,16 +37,22 @@
  */
 struct Function {
   /* Constructs a function. */
-  explicit Function(int index) : index_(index) {}
+  explicit Function(int index, bool partiallyObservable) : index_(index), partiallyObservable_(partiallyObservable) {}
 
  private:
   /* Function index. */
   int index_;
 
+  /* Is this function partially observable ? */
+  bool partiallyObservable_;
+
   friend bool operator==(const Function& f1, const Function& f2);
   friend bool operator<(const Function& f1, const Function& f2);
   friend std::ostream& operator<<(std::ostream& os, const Function& f);
   friend struct FunctionTable;
+
+ public:
+  bool isPartiallyObservable() const { return partiallyObservable_; };
 };
 
 /* Equality operator for functions. */
@@ -100,7 +106,7 @@ struct FunctionTable {
 
   /* Adds a function with the given name to this table and returns the
      function. */
-  const Function& add_function(const std::string& name);
+  const Function& add_function(const std::string& name, const bool partiallyObservable);
 
   /* Returns a pointer to the function with the given name, or 0 if no
      function with the given name exists. */
