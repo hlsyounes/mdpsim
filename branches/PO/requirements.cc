@@ -26,7 +26,7 @@ Requirements::Requirements()
     disjunctive_preconditions(false), equality(false),
     existential_preconditions(false), universal_preconditions(false),
     conditional_effects(false), fluents(false), probabilistic_effects(false),
-    rewards(false) {}
+    rewards(false), partial_observability(false) {}
 
 
 /* Enables quantified preconditions. */

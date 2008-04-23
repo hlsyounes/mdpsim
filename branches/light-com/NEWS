@@ -1,3 +1,32 @@
+Version 2.2.3 (Jan 22, 2008)
+
+* Added "light-com" protocol, which transmits only state changes
+  between time step t and t+1. See details of the protocol in README.
+  Tested with mdpclient, mtbddclient and FPG (option "-l" in all three
+  cases).
+
+* Fixed memory leak in strxml.cc (r23).
+
+Version 2.2.2 (Nov 2, 2007)
+
+* Added newline character to state message (was removed in version
+  2.0---should not be needed, but it seems that some clients rely on it being
+  present, so it was added for backward compatibility).
+
+* Set TCP_NODELAY to optimize socket communication for small messages.
+
+* Updated protocol description in README to match implementation.
+
+* Fixed problem with lost server messages at the end of a session.
+
+* Simplified configuration of CUDDDIR (no need to place library files in a
+  single directory anymore---CUDDDIR can just be set of base directory of cudd
+  package).  Also fixed compilation of mtbddclient on Cygwin.
+
+Version 2.2.1 (Oct 13, 2007)
+
+* Fixed configuration issues on Mac reported by Daniel Borrajo.
+
 Version 2.2 (Oct 9, 2007)
 
 * Released under Apache License 2.0.

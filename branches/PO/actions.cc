@@ -220,15 +220,19 @@ void Action::affect(const TermTable& terms,
       *changes << "<state-change>";
       for (AtomList::const_iterator ai = deletes.begin();
 	   ai != deletes.end(); ai++) {
-	  *changes << "<del>";
-	  (*ai)->printXML(*changes);	  
-	  *changes << "</del>";
+	  if (!(*ai)->predicate().isPartiallyObservable()) {
+	      *changes << "<del>";
+	      (*ai)->printXML(*changes);	  
+	      *changes << "</del>";
+	  }
       }
       for (AtomList::const_iterator ai = adds.begin();
 	   ai != adds.end(); ai++) {
-	  *changes << "<add>";
-	  (*ai)->printXML(*changes);
-	  *changes << "</add>";
+	  if (!(*ai)->predicate().isPartiallyObservable()) {
+	      *changes << "<add>";
+	      (*ai)->printXML(*changes);
+	      *changes << "</add>";
+	  }
       }
   }
   
@@ -236,10 +240,12 @@ void Action::affect(const TermTable& terms,
        ui != updates.end(); ui++) {
       (*ui)->affect(values);
       if (changes != NULL) {
-	  *changes << "<fluent>";
-	  (*ui)->fluent().printXML(*changes);
-	  *changes << "<value>" << values[&(*ui)->fluent()] << "</value>";
-	  *changes << "</fluent>";
+	  if (!(*ui)->fluent().function().isPartiallyObservable()) {
+	      *changes << "<fluent>";
+	      (*ui)->fluent().printXML(*changes);
+	      *changes << "<value>" << values[&(*ui)->fluent()] << "</value>";
+	      *changes << "</fluent>";
+	  }
       }
   }
  

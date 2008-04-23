@@ -72,6 +72,8 @@ problem                         return make_string(yytext, PROBLEM);
 :probabilistic-effects          return PROBABILISTIC_EFFECTS;
 :rewards                        return REWARDS;
 :mdp                            return MDP;
+:partial-observability          return PARTIAL_OBSERVABILITY;
+:no                             return NOT_OBSERVABLE;
 :action                         return ACTION;
 :parameters                     return PARAMETERS;
 :precondition                   return PRECONDITION;

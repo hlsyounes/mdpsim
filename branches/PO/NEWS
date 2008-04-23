@@ -1,3 +1,14 @@
+* Added partial observability. See README for the additions to PDDL.
+
+Version 2.2.3 (Jan 22, 2008)
+
+* Added "light-com" protocol, which transmits only state changes
+  between time step t and t+1. See details of the protocol in README.
+  Tested with mdpclient, mtbddclient and FPG (option "-l" in all three
+  cases).
+
+* Fixed memory leak in strxml.cc (r23).
+
 Version 2.2.2 (Nov 2, 2007)
 
 * Added newline character to state message (was removed in version

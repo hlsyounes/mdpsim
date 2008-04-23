@@ -222,6 +222,37 @@ For more details on the communication protocol, see:
     competition." Journal of Artificial Intelligence Research 24: 851-887.
 
 
+Light-communication protocol
+----------------------------
+
+With some planning problems, transmitting the whole state at each time
+step is an issue (too many atoms). That's why MDPsim now offers an
+alternative protocol. Here are the two main points to know:
+
+1- When sending a session request, the planner specifies that it wants
+to use this "light-com" protocol by adding "<light-com/>" just before
+"</session-request>".
+
+2- During the simulation phase, the server sends:
+ - a complete -state- when the state is re-initialized and
+ - a -state-change- otherwise.
+A -state-change- is defined as follows:
+
+  <state-change>
+    <is-goal> (this will only appear if the goal has been met)
+    <add>
+      -atoms-
+    </add>
+    <del>
+      -atoms-
+    </del>
+    <value>
+      -fluents-
+    </value>
+  </state-change>
+
+
+
 Conversion to ADD/MTBDD Representation
 --------------------------------------
 
@@ -262,3 +293,29 @@ Next, start the client:
 You can increase the verbosity level by using -v2 or -v3 instead of
 -v1.  This will provide more detailed output from the conversion to
 MTBDDs and the progress of value iteration.
+
+
+
+Partial Observability
+---------------------
+
+Partial observability is here added to PDDL in a rather simple manner:
+
+ - A ":partial-observability" requirement specifies that the domain is
+ not fully observable.
+
+ - When defining predicates and functions, the keyword ":NO" specifies
+ that the current predicate/function being defined is "not observable"
+ (the default being "fully observable").
+
+As when modelling a problem with a bayesian network, it is sufficient
+to separate variables between "fully observable" (evidence) variables
+and "non observable" (hidden) ones.
+
+Action preconditions and the goal formula should not involve
+non-observable variables (although MDPSim does not verify this
+property). Effects and formulae for conditional effects can involve
+non-observable variables.
+
+To test partial observability, a new version of the tiger problem has
+been added: ./examples/tiger-po.pddl .

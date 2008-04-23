@@ -105,7 +105,7 @@ static Problem* problem;
 /* Current requirements. */
 static Requirements* requirements;
 /* The reward function, if rewards are required. */
-static Function reward_function(-1);
+static Function reward_function(-1, false);
 /* Predicate being parsed. */
 static const Predicate* predicate;
 /* Whether predicate declaration is repeated. */
@@ -130,7 +130,7 @@ static bool metric_fluent;
 static const Function* fluent_function;
 /* Whether the function of the currently parsed fluent was undeclared. */
 static bool undeclared_fluent_function;
-/* Paramerers for atomic state formula or fluent being parsed. */
+/* Parameters for atomic state formula or fluent being parsed. */
 static TermList term_parameters;
 /* Quantified variables for effect or formula being parsed. */
 static TermList quantified;
@@ -162,6 +162,8 @@ static void require_fluents();
 static void require_disjunction();
 /* Adds :conditional-effects to the requirements. */
 static void require_conditional_effects();
+/* Adds :partial_observability to the requirements. */
+static void require_partial_observability();
 /* Returns a simple type with the given name. */
 static const Type& make_type(const std::string* name);
 /* Returns the union of the given types. */
@@ -169,9 +171,9 @@ static Type make_type(const TypeSet& types);
 /* Returns a simple term with the given name. */
 static Term make_term(const std::string* name);
 /* Creates a predicate with the given name. */
-static void make_predicate(const std::string* name);
+static void make_predicate(const std::string* name, const bool partiallyObservable);
 /* Creates a function with the given name. */
-static void make_function(const std::string* name);
+static void make_function(const std::string* name, const bool partiallyObservable);
 /* Creates an action with the given name. */
 static void make_action(const std::string* name);
 /* Adds the current action to the current domain. */
@@ -254,7 +256,7 @@ static void set_default_metric();
 %token EXISTENTIAL_PRECONDITIONS UNIVERSAL_PRECONDITIONS
 %token QUANTIFIED_PRECONDITIONS CONDITIONAL_EFFECTS FLUENTS ADL
 %token DURATIVE_ACTIONS DURATION_INEQUALITIES CONTINUOUS_EFFECTS
-%token PROBABILISTIC_EFFECTS REWARDS MDP
+%token PROBABILISTIC_EFFECTS REWARDS MDP PARTIAL_OBSERVABILITY NOT_OBSERVABLE
 %token ACTION PARAMETERS PRECONDITION EFFECT
 %token PDOMAIN OBJECTS INIT GOAL GOAL_REWARD METRIC TOTAL_TIME GOAL_ACHIEVED
 %token WHEN NOT AND OR IMPLY EXISTS FORALL PROBABILISTIC
@@ -421,13 +423,17 @@ require_key : STRIPS { requirements->strips = true; }
             | REWARDS
                 {
                   requirements->rewards = true;
-                  reward_function = domain->functions().add_function("reward");
+                  reward_function = domain->functions().add_function("reward", true);
                 }
             | MDP
                 {
                   requirements->mdp();
-                  reward_function = domain->functions().add_function("reward");
+                  reward_function = domain->functions().add_function("reward", true);
                 }
+            | PARTIAL_OBSERVABILITY
+                {
+		  requirements->partial_observability = true;
+		}
             ;
 
 types_def : '(' TYPES { require_typing(); name_kind = TYPE_KIND; }
@@ -452,7 +458,9 @@ predicate_decls : /* empty */
                 | predicate_decls predicate_decl
                 ;
 
-predicate_decl : '(' predicate { make_predicate($2); } variables ')'
+predicate_decl  : '(' NOT_OBSERVABLE predicate { make_predicate($3, true); } variables ')'
+                   { predicate = 0; }
+                | '(' predicate { make_predicate($2, false); } variables ')'
                    { predicate = 0; }
                ;
 
@@ -468,7 +476,9 @@ function_decl_seq : function_decl
 function_type_spec : '-' { require_typing(); } function_type
                    ;
 
-function_decl : '(' function { make_function($2); } variables ')'
+function_decl : '(' NOT_OBSERVABLE function { make_function($3, true); } variables ')'
+                  { function = 0; }
+	      | '(' function { make_function($2, false); } variables ')'
                   { function = 0; }
               ;
 
@@ -972,6 +982,14 @@ static void require_conditional_effects() {
   }
 }
 
+/* Adds :partial-observability to the requirements. */
+static void require_partial_observability() {
+  if (!requirements->partial_observability) {
+    yywarning("assuming `:partial-observability' requirement");
+    requirements->partial_observability = true;
+  }
+}
+
 
 /* Returns a simple type with the given name. */
 static const Type& make_type(const std::string* name) {
@@ -1028,11 +1046,13 @@ static Term make_term(const std::string* name) {
 
 
 /* Creates a predicate with the given name. */
-static void make_predicate(const std::string* name) {
+static void make_predicate(const std::string* name, const bool partiallyObservable) {
+  if (partiallyObservable)
+      require_partial_observability();
   predicate = domain->predicates().find_predicate(*name);
   if (predicate == 0) {
     repeated_predicate = false;
-    predicate = &domain->predicates().add_predicate(*name);
+    predicate = &domain->predicates().add_predicate(*name, partiallyObservable);
   } else {
     repeated_predicate = true;
     yywarning("ignoring repeated declaration of predicate `" + *name + "'");
@@ -1042,11 +1062,11 @@ static void make_predicate(const std::string* name) {
 
 
 /* Creates a function with the given name. */
-static void make_function(const std::string* name) {
+static void make_function(const std::string* name, const bool partiallyObservable) {
   repeated_function = false;
   function = domain->functions().find_function(*name);
   if (function == 0) {
-    function = &domain->functions().add_function(*name);
+    function = &domain->functions().add_function(*name, partiallyObservable);
   } else {
     repeated_function = true;
     if (requirements->rewards && *name == "reward") {
@@ -1323,7 +1343,7 @@ static void add_variables(const std::vector<const std::string*>* names,
 static void prepare_atom(const std::string* name) {
   atom_predicate = domain->predicates().find_predicate(*name);
   if (atom_predicate == 0) {
-    atom_predicate = &domain->predicates().add_predicate(*name);
+    atom_predicate = &domain->predicates().add_predicate(*name, false);
     undeclared_atom_predicate = true;
     if (problem != 0) {
       yywarning("undeclared predicate `" + *name + "' used");
@@ -1342,7 +1362,7 @@ static void prepare_atom(const std::string* name) {
 static void prepare_fluent(const std::string* name) {
   fluent_function = domain->functions().find_function(*name);
   if (fluent_function == 0) {
-    fluent_function = &domain->functions().add_function(*name);
+    fluent_function = &domain->functions().add_function(*name, false);
     undeclared_fluent_function = true;
     if (problem != 0) {
       yywarning("undeclared function `" + *name + "' used");

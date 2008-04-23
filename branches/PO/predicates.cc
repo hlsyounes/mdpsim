@@ -71,9 +71,9 @@ bool PredicateTable::static_predicate(const Predicate& predicate) {
 
 /* Adds a predicate with the given name to this table and returns
    the predicate. */
-const Predicate& PredicateTable::add_predicate(const std::string& name) {
+const Predicate& PredicateTable::add_predicate(const std::string& name, bool partiallyObservable) {
   std::pair<std::map<std::string, Predicate>::const_iterator, bool> pi =
-    predicates_.insert(std::make_pair(name, Predicate(names_.size())));
+      predicates_.insert(std::make_pair(name, Predicate(names_.size(), partiallyObservable)));
   const Predicate& predicate = (*pi.first).second;
   names_.push_back(name);
   parameters_.push_back(TypeList());
