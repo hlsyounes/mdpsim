@@ -1,3 +1,8 @@
+Version 2.2.3 (Jan 23, 2008)
+
+* Added the "light-com" protocol. With this communication protocol, the server
+  sends state changes to the client rather than complete states.
+
 Version 2.2.2 (Nov 2, 2007)
 
 * Added newline character to state message (was removed in version
