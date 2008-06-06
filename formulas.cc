@@ -1011,6 +1011,9 @@ const StateFormula& Forall::instantiation(const SubstitutionMap& subst,
     Type t = TermTable::type(parameters()[i]);
     arguments[i] = &terms.compatible_objects(t);
     if (arguments[i]->empty()) {
+	// fix for memory leak
+	for (int j = 0; j < i; j++)
+	    delete arguments[j];
       return TRUE;
     }
     next_arg.push_back(arguments[i]->begin());
@@ -1033,6 +1036,9 @@ const StateFormula& Forall::instantiation(const SubstitutionMap& subst,
           destructive_deref(conjuncts.top());
           conjuncts.pop();
         }
+	// fix for memory leak
+	for (int i = 0; i < n; i++)
+	    delete arguments[i];
         return *inst_forall;
       }
       for (int j = i; j >= 0; j--) {
@@ -1062,6 +1068,11 @@ const StateFormula& Forall::instantiation(const SubstitutionMap& subst,
     destructive_deref(conjuncts.top());
     conjuncts.pop();
   }
+
+  // fix for memory leak
+  for (int i = 0; i < n; i++)
+      delete arguments[i];
+
   return *inst_forall;
 }
 

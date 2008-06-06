@@ -177,7 +177,7 @@ int main(int argc, char* argv[]) {
   /* Set default time limit. */
   long time_limit = 900000;
   /* Set default round limit */
-  int round_limit = 30;
+  int round_limit = 100;
   /* Set default turn limit. */
   int turn_limit = INT_MAX;
 

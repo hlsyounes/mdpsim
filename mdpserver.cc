@@ -231,9 +231,9 @@ static void* host_problem(void* arg) {
 
   bool light_com = (init_node->getChild("light-com"));
   if (light_com)
-      std::cerr<<"LIGHT-COM on"<<std::endl;
+      std::cout<<"LIGHT-COM on"<<std::endl;
   else
-      std::cerr<<"LIGHT-COM off"<<std::endl;
+      std::cout<<"LIGHT-COM off"<<std::endl;
 
   delete init_node;
 
