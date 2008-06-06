@@ -128,7 +128,9 @@ const ObjectList& TermTable::compatible_objects(const Type& type) const {
   } else {
     ObjectList* objects;
     if (parent_ != 0) {
-      objects = new ObjectList(parent_->compatible_objects(type));
+	const ObjectList* tmp = &parent_->compatible_objects(type);
+	objects = new ObjectList(*tmp);
+	delete tmp;
     } else {
       objects = new ObjectList();
     }
