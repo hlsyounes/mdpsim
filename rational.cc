@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 #include "rational.h"
+#include <cstdlib>
 #include <stdexcept>
 
 
