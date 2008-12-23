@@ -20,9 +20,11 @@
 #include "problems.h"
 #include "domains.h"
 #include "actions.h"
+#include <cstdlib>
 #include <iostream>
 #include <cerrno>
 #include <cstdio>
+#include <cstring>
 #if HAVE_GETOPT_LONG
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
