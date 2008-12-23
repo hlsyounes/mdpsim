@@ -16,11 +16,13 @@
  */
 
 #include <config.h>
+#include "mdpcommon.h"
 #include "mdpserver.h"
 #include "strxml.h"
 #include "states.h"
 #include "problems.h"
 #include "domains.h"
+#include <cstring>
 #include <fstream>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -259,7 +261,8 @@ static void* host_problem(void* arg) {
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
-    write(client_socket, os.str().c_str(), os.str().length());
+    if (! write(client_socket, os.str().c_str(), os.str().length()))
+	EXIT_ERROR;
     return 0;
   }
 
@@ -281,7 +284,8 @@ static void* host_problem(void* arg) {
 #if !HAVE_SSTREAM
   os << '\0';
 #endif
-  write(client_socket, os.str().c_str(), os.str().length());
+  if (! write(client_socket, os.str().c_str(), os.str().length()))
+      EXIT_ERROR;
 
   long start_time_session = get_time_milli();
 
@@ -312,7 +316,8 @@ static void* host_problem(void* arg) {
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
-    write(client_socket, os.str().c_str(), os.str().length());
+    if (! write(client_socket, os.str().c_str(), os.str().length()))
+	EXIT_ERROR;
 
     //create initial state
     const State *s = new State(*problem);
@@ -341,7 +346,8 @@ static void* host_problem(void* arg) {
 #if !HAVE_SSTREAM
       os << '\0';
 #endif
-      write(client_socket, os.str().c_str(), os.str().length());
+      if (! write(client_socket, os.str().c_str(), os.str().length()))
+	  EXIT_ERROR;
 
       const Action *action = 0;
       const XMLNode* actnode = read_node(client_socket);
@@ -376,7 +382,8 @@ static void* host_problem(void* arg) {
 #if !HAVE_SSTREAM
           os << '\0';
 #endif
-          write(client_socket, os.str().c_str(), os.str().length());
+          if (! write(client_socket, os.str().c_str(), os.str().length()))
+	      EXIT_ERROR;
 
           running = false;
         } else {
@@ -428,7 +435,8 @@ static void* host_problem(void* arg) {
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
-    write(client_socket, os.str().c_str(), os.str().length());
+    if (! write(client_socket, os.str().c_str(), os.str().length()))
+	EXIT_ERROR;
 
     delete s;
 
@@ -443,7 +451,8 @@ static void* host_problem(void* arg) {
 #if !HAVE_SSTREAM
   os << '\0';
 #endif
-  write(client_socket, os.str().c_str(), os.str().length());
+  if (! write(client_socket, os.str().c_str(), os.str().length()))
+      EXIT_ERROR;
 
   std::cout << "session " << id << " complete" << std::endl;
 

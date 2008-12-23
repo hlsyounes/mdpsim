@@ -28,9 +28,12 @@
 #else
 #include "port/getopt.h"
 #endif
+#include <cstdlib>
 #include <cerrno>
 #include <cstdio>
 #include <ctime>
+#include <cstring>
+#include <climits>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
