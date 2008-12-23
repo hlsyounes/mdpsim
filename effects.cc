@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 #include "effects.h"
+#include <cstdlib>
 #include <stack>
 #include <stdexcept>
 #include <typeinfo>
