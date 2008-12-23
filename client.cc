@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 #include <config.h>
+#include "mdpcommon.h"
 #include "client.h"
 #include "strxml.h"
+#include <cstdlib>
 #if HAVE_SSTREAM
 #include <sstream>
 #else
@@ -26,7 +28,6 @@ typedef std::ostrstream ostringstream;
 }
 #endif
 #include <unistd.h>
-
 
 /* Extracts session request information. */
 static bool sessionRequestInfo(const XMLNode* node,
@@ -235,7 +236,8 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
 #if !HAVE_SSTREAM
   os << '\0';
 #endif
-  write(fd, os.str().c_str(), os.str().length());
+  if (! write(fd, os.str().c_str(), os.str().length())) 
+      EXIT_ERROR;
 
   const XMLNode* sessionInitNode = read_node(fd);
 
@@ -262,7 +264,8 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
 #if !HAVE_SSTREAM
     os << '\0';
 #endif
-    write(fd, os.str().c_str(), os.str().length());
+    if (! write(fd, os.str().c_str(), os.str().length()))
+      EXIT_ERROR;
     const XMLNode* roundInitNode = read_node(fd);
     if (!roundInitNode || roundInitNode->getName() != "round-init") {
       std::cerr << "Error in server's round-request response" << std::endl;
@@ -319,7 +322,8 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
 #if !HAVE_SSTREAM
       os << '\0';
 #endif
-      write(fd, os.str().c_str(), os.str().length());
+      if (! write(fd, os.str().c_str(), os.str().length()))
+	  EXIT_ERROR;
     }
 
     planner.endRound();
