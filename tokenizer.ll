@@ -27,7 +27,7 @@
 #include <cctype>
 #include <string>
 
-#include "parser.h"
+#include "parser.hh"
 
 
 /* Current line number. */
