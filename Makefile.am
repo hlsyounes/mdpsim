@@ -21,7 +21,7 @@ mdpsim_SOURCES = mdpsim.cc mdpserver.cc mdpserver.h strxml.cc strxml.h requireme
 mdpclient_SOURCES = mdpclient.cc client.cc client.h strxml.cc strxml.h requirements.cc requirements.h rational.cc rational.h types.cc types.h terms.cc terms.h predicates.cc predicates.h functions.cc functions.h refcount.h expressions.cc expressions.h formulas.cc formulas.h effects.cc effects.h actions.cc actions.h domains.cc domains.h problems.cc problems.h states.cc states.h tokenizer.ll
 mtbddclient_SOURCES = mtbddclient.cc mtbdd.cc mtbdd.h client.cc client.h strxml.cc strxml.h requirements.cc requirements.h rational.cc rational.h types.cc types.h terms.cc terms.h predicates.cc predicates.h functions.cc functions.h refcount.h expressions.cc expressions.h formulas.cc formulas.h effects.cc effects.h actions.cc actions.h domains.cc domains.h problems.cc problems.h states.cc states.h tokenizer.ll
 
-mdpsim_LDADD = @LIBOBJS@ @PTHREADLIB@
+mdpsim_LDADD = @LIBOBJS@ @PTHREADLIB@ -lstdc++fs
 mdpclient_LDADD = parser.o @LIBOBJS@
 mtbddclient_CPPFLAGS = @CPPFLAGS@ -I"@CUDDDIR@/include"
 mtbddclient_LDFLAGS = @LDFLAGS@ -L"@CUDDDIR@/cudd" -L"@CUDDDIR@/epd" -L"@CUDDDIR@/mtr" -L"@CUDDDIR@/st" -L"@CUDDDIR@/util"
@@ -29,6 +29,8 @@ mtbddclient_LDADD = parser.o -lcudd -lepd -lmtr -lst -lutil @LIBOBJS@
 
 CLEANFILES = logs/* last_id mtbddclient
 MAINTAINERCLEANFILES = parser.cc tokenizer.cc config.h.in~
-EXTRA_DIST = getopt.c getopt1.c comp.cfg examples logs port LICENSE NOTICE
+EXTRA_DIST = getopt.c getopt1.c comp.cfg examples port LICENSE NOTICE
 
 AM_YFLAGS = -d
+
+ACLOCAL_AMFLAGS = -I m4

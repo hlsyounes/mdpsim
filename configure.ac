@@ -32,6 +32,8 @@ AC_PROG_AWK
 AM_PROG_LEX
 AC_PROG_YACC
 
+AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
+
 # Set the language.
 AC_LANG(C++)
 

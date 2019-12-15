@@ -23,6 +23,7 @@
 #include "problems.h"
 #include "domains.h"
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -444,6 +445,7 @@ int run_server(int port, long time_limit, int round_limit, int turn_limit) {
   struct sockaddr_in addr;
   int server_socket;
 
+  std::filesystem::create_directories(log_dir);
   if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     return -1;
   }
