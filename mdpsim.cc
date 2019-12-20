@@ -28,6 +28,7 @@
 #else
 #include "port/getopt.h"
 #endif
+#include <chrono>
 #include <cstdlib>
 #include <cerrno>
 #include <cstdio>
@@ -178,7 +179,7 @@ int main(int argc, char* argv[]) {
   /* Set default seed. */
   size_t seed = time(0);
   /* Set default time limit. */
-  long time_limit = 900000;
+  std::chrono::milliseconds time_limit = std::chrono::minutes(15);
   /* Set default round limit */
   int round_limit = 30;
   /* Set default turn limit. */
@@ -217,7 +218,7 @@ int main(int argc, char* argv[]) {
       seed = atoi(optarg);
       break;
     case 'T':
-      time_limit = atol(optarg);
+      time_limit = std::chrono::milliseconds(atol(optarg));
       break;
     case 'v':
       verbosity = (optarg != 0) ? atoi(optarg) : 1;
@@ -333,7 +334,9 @@ int main(int argc, char* argv[]) {
             break;
           }
           Problem_CFG cfg;
-          fin >> cfg.time_limit;
+          std::chrono::milliseconds::rep time_limit_value;
+          fin >> time_limit_value;
+          cfg.time_limit = std::chrono::milliseconds(time_limit_value);
           fin >> cfg.round_limit;
           fin >> cfg.turn_limit;
           config_map[problem_name] = cfg;

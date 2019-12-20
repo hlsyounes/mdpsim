@@ -20,19 +20,21 @@
 #ifndef _MDPSERVER_H
 #define _MDPSERVER_H
 
+#include <chrono>
 #include <map>
 #include <string>
 
 
 /* Runs a server. */
-int run_server(int port, long time_limit, int round_limit, int turn_limit);
+int run_server(int port, std::chrono::milliseconds time_limit, int round_limit,
+               int turn_limit);
 
 
 /*
  * Configuration parameters for a problem.
  */
 struct Problem_CFG {
-  long time_limit;
+  std::chrono::milliseconds time_limit;
   int round_limit;
   int turn_limit;
 };

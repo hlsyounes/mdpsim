@@ -30,7 +30,6 @@
 #include <netinet/tcp.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
 #if HAVE_SSTREAM
@@ -56,6 +55,27 @@ extern bool log_paths;
 /* Global configuration. */
 CFG_map config_map;
 
+namespace {
+
+// A simple timer that measures elapsed time since construction.
+class Timer {
+ public:
+  using Clock = std::chrono::steady_clock;
+
+  // Starts the timer.
+  Timer() : start_(Clock::now()) {}
+
+  // Returns the elapsed time in milliseconds since construction.
+  std::chrono::milliseconds GetElapsedMilliseconds() const {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+        Clock::now() - start_);
+  }
+
+ private:
+  std::chrono::steady_clock::time_point start_;
+};
+
+}  // namespace
 
 /* Returns the action with the given parameters, or 0 if no such
    action exists. */
@@ -104,14 +124,6 @@ static int new_id() {
 }
 
 
-/* Returns the current time in milliseconds. */
-static long get_time_milli() {
-  struct timeval t;
-  gettimeofday(&t, 0);
-  return (t.tv_sec%100000)*1000 + t.tv_usec/1000;
-}
-
-
 /* Writes a "bad-problem" error message to the given stream. */
 void LogBadProblem(std::ostream& os, const std::string& problem_name) {
   os << "<error>bad problem \"" << problem_name << "\"</error>" << std::endl;
@@ -124,7 +136,7 @@ void LogSessionInit(std::ostream& os, int id, const Problem_CFG& cfg) {
      << "<sessionID>" << id << "</sessionID>"
      << "<setting>"
      << "<rounds>" << cfg.round_limit << "</rounds>"
-     << "<allowed-time>" << cfg.time_limit << "</allowed-time>"
+     << "<allowed-time>" << cfg.time_limit.count() << "</allowed-time>"
      << "<allowed-turns>" << cfg.turn_limit << "</allowed-turns>"
      << "</setting>"
      << "</session-init>" << std::endl;
@@ -132,12 +144,12 @@ void LogSessionInit(std::ostream& os, int id, const Problem_CFG& cfg) {
 
 
 /* Writes a "round-init" message to the given stream. */
-void LogRoundInit(std::ostream& os,
-                  int id, int round, int time_left, int rounds_left) {
+void LogRoundInit(std::ostream& os, int id, int round,
+                  std::chrono::milliseconds time_left, int rounds_left) {
   os << "<round-init>"
      << "<sessionID>" << id << "</sessionID>"
      << "<round>" << round << "</round>"
-     << "<time-left>" << std::max(0, time_left) << "</time-left>"
+     << "<time-left>" << time_left.count() << "</time-left>"
      << "<rounds-left>" << rounds_left << "</rounds-left>"
      << "</round-init>" << std::endl;
 }
@@ -158,7 +170,7 @@ void LogActionError(std::ostream& os,
 /* Writes an "end-round" message to the given stream. */
 void LogEndRound(std::ostream& os,
                  int id, int round, const State& s,
-                 long time_spent, int turns_used) {
+                 std::chrono::milliseconds time_spent, int turns_used) {
   os << "<end-round>"
      << "<sessionID>" << id << "</sessionID>"
      << "<round>" << round << "</round>";
@@ -166,7 +178,7 @@ void LogEndRound(std::ostream& os,
   if (s.goal()) {
     os << "<goal-reached/>";
   }
-  os << "<time-spent>" << time_spent << "</time-spent>"
+  os << "<time-spent>" << time_spent.count() << "</time-spent>"
      << "<turns-used>" << turns_used << "</turns-used>"
      << "</end-round>" << std::endl;
 }
@@ -175,7 +187,7 @@ void LogEndRound(std::ostream& os,
 /* Writes an "end-session" message to the given stream. */
 void LogEndSession(std::ostream& os,
                    int id, int rounds, int round_limit, int successes,
-                   long total_time, int total_turns,
+                   std::chrono::milliseconds total_time, int total_turns,
                    const Rational& total_metric) {
   os << "<end-session>"
      << "<sessionID>" << id << "</sessionID>"
@@ -185,7 +197,7 @@ void LogEndSession(std::ostream& os,
      << "<reached>"
      << "<successes>" << successes << "</successes>";
   if (successes > 0) {
-    os << "<time-average>" << double(total_time)/successes
+    os << "<time-average>" << double(total_time.count())/successes
        << "</time-average>";
     os << "<turn-average>" << double(total_turns)/successes
        << "</turn-average>";
@@ -204,7 +216,7 @@ void LogEndSession(std::ostream& os,
 static void* host_problem(void* arg) {
   std::pair<int, Problem_CFG>* p = (std::pair<int, Problem_CFG>*) arg;
   int client_socket = p->first;
-  long time_limit = p->second.time_limit;
+  const std::chrono::milliseconds time_limit = p->second.time_limit;
   int round_limit = p->second.round_limit;
   int turn_limit = p->second.turn_limit;
   delete p;
@@ -282,10 +294,10 @@ static void* host_problem(void* arg) {
   if (! write(client_socket, os.str().c_str(), os.str().length()))
       EXIT_ERROR;
 
-  long start_time_session = get_time_milli();
+  Timer session_timer;
 
   Rational total_metric = 0;
-  time_t total_time = 0;
+  auto total_time = std::chrono::milliseconds::zero();
   int total_turns;
   int success_count = 0;
 
@@ -303,7 +315,9 @@ static void* host_problem(void* arg) {
       delete roundReq;
     }
 
-    long time_left = cfg.time_limit - (get_time_milli() - start_time_session);
+    const std::chrono::milliseconds time_left = std::max(
+        std::chrono::milliseconds::zero(),
+        cfg.time_limit - session_timer.GetElapsedMilliseconds());
 
     os.str("");
     LogRoundInit(os, id, round, time_left, cfg.round_limit - round);
@@ -317,9 +331,9 @@ static void* host_problem(void* arg) {
     //create initial state
     const State *s = new State(*problem);
 
-    bool running = time_left > 0;
+    bool running = time_left > std::chrono::milliseconds::zero();
     int turn = 1;
-    long start_time = get_time_milli();
+    Timer round_timer;
     while (running && turn <= cfg.turn_limit && !s->goal()) {
       os.str("");
       s->printXML(os);
@@ -386,7 +400,7 @@ static void* host_problem(void* arg) {
 
       delete actnode;
 
-      if (cfg.time_limit <= get_time_milli() - start_time_session) {
+      if (cfg.time_limit <= session_timer.GetElapsedMilliseconds()) {
         running = false;
       }
 
@@ -400,8 +414,9 @@ static void* host_problem(void* arg) {
 
     total_metric = total_metric + problem->metric().value(s->values());
 
-    long time_spent =
-      std::max(0L, std::min(time_left, get_time_milli() - start_time));
+    const std::chrono::milliseconds time_spent = std::max(
+        std::chrono::milliseconds::zero(),
+        std::min(time_left, round_timer.GetElapsedMilliseconds()));
     int turns_used = turn - 1;
     if (s->goal()) {
       total_time += time_spent;
@@ -441,7 +456,8 @@ static void* host_problem(void* arg) {
 
 
 /* Runs a server. */
-int run_server(int port, long time_limit, int round_limit, int turn_limit) {
+int run_server(int port, std::chrono::milliseconds time_limit, int round_limit,
+               int turn_limit) {
   struct sockaddr_in addr;
   int server_socket;
 

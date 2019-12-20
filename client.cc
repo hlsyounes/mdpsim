@@ -18,6 +18,7 @@
 #include "mdpcommon.h"
 #include "client.h"
 #include "strxml.h"
+#include <chrono>
 #include <cstdlib>
 #if HAVE_SSTREAM
 #include <sstream>
@@ -30,8 +31,8 @@ typedef std::ostrstream ostringstream;
 #include <unistd.h>
 
 /* Extracts session request information. */
-static bool sessionRequestInfo(const XMLNode* node,
-                               int& rounds, long& time, int& turns) {
+static bool sessionRequestInfo(const XMLNode* node, int& rounds,
+                               std::chrono::milliseconds& time, int& turns) {
   if (node == 0) {
     return false;
   }
@@ -50,7 +51,7 @@ static bool sessionRequestInfo(const XMLNode* node,
   if (!settingNode->dissect("allowed-time", s)) {
     return false;
   }
-  time = atol(s.c_str());
+  time = std::chrono::milliseconds(atol(s.c_str()));
 
   if (!settingNode->dissect("allowed-turns", s)) {
     return false;
@@ -242,7 +243,7 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
   const XMLNode* sessionInitNode = read_node(fd);
 
   int total_rounds, round_turns;
-  long round_time;
+  std::chrono::milliseconds round_time;
   if (!sessionRequestInfo(sessionInitNode,
                           total_rounds, round_time, round_turns)) {
     std::cerr << "Error in server's session-request response" << std::endl;
