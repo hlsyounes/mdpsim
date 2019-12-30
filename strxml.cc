@@ -16,14 +16,7 @@
  */
 #include <config.h>
 #include "strxml.h"
-#if HAVE_SSTREAM
 #include <sstream>
-#else
-#include <strstream>
-namespace std {
-typedef std::ostrstream ostringstream;
-}
-#endif
 #include <stack>
 #include <unistd.h>
 
@@ -342,9 +335,6 @@ std::string XMLParent::getText() const {
        ni != children.end(); ni++) {
     os << *ni;
   }
-#if !HAVE_SSTREAM
-  os << '\0';
-#endif
   return os.str();
 }
 

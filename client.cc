@@ -20,14 +20,7 @@
 #include "strxml.h"
 #include <chrono>
 #include <cstdlib>
-#if HAVE_SSTREAM
 #include <sstream>
-#else
-#include <strstream>
-namespace std {
-typedef std::ostrstream ostringstream;
-}
-#endif
 #include <unistd.h>
 
 /* Extracts session request information. */
@@ -234,9 +227,6 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
      <<  "<name>" << name << "</name>"
      <<  "<problem>" << problem.name() << "</problem>"
      << "</session-request>";
-#if !HAVE_SSTREAM
-  os << '\0';
-#endif
   if (! write(fd, os.str().c_str(), os.str().length())) 
       EXIT_ERROR;
 
@@ -262,9 +252,6 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
     rounds_left--;
     os.str("");
     os << "<round-request/>";
-#if !HAVE_SSTREAM
-    os << '\0';
-#endif
     if (! write(fd, os.str().c_str(), os.str().length()))
       EXIT_ERROR;
     const XMLNode* roundInitNode = read_node(fd);
@@ -320,9 +307,6 @@ XMLClient::XMLClient(Planner& planner, const Problem& problem,
 
       os.str("");
       sendAction(os, a);
-#if !HAVE_SSTREAM
-      os << '\0';
-#endif
       if (! write(fd, os.str().c_str(), os.str().length()))
 	  EXIT_ERROR;
     }

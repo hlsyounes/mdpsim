@@ -32,14 +32,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <pthread.h>
-#if HAVE_SSTREAM
 #include <sstream>
-#else
-#include <strstream>
-namespace std {
-typedef std::ostrstream ostringstream;
-}
-#endif
 
 #if !HAVE_SOCKLEN_T
 # if !defined(__sgi) || defined(_NO_XOPEN4)
@@ -265,9 +258,6 @@ static void* host_problem(void* arg) {
     os.str("");
     LogBadProblem(os, problem_name);
     LogBadProblem(log_out, problem_name);
-#if !HAVE_SSTREAM
-    os << '\0';
-#endif
     if (! write(client_socket, os.str().c_str(), os.str().length()))
 	EXIT_ERROR;
     return 0;
@@ -288,9 +278,6 @@ static void* host_problem(void* arg) {
   os.str("");
   LogSessionInit(os, id, cfg);
   LogSessionInit(log_out, id, cfg);
-#if !HAVE_SSTREAM
-  os << '\0';
-#endif
   if (! write(client_socket, os.str().c_str(), os.str().length()))
       EXIT_ERROR;
 
@@ -322,9 +309,6 @@ static void* host_problem(void* arg) {
     os.str("");
     LogRoundInit(os, id, round, time_left, cfg.round_limit - round);
     LogRoundInit(log_out, id, round, time_left, cfg.round_limit - round);
-#if !HAVE_SSTREAM
-    os << '\0';
-#endif
     if (! write(client_socket, os.str().c_str(), os.str().length()))
 	EXIT_ERROR;
 
@@ -342,9 +326,6 @@ static void* host_problem(void* arg) {
         s->printXML(log_out);
         log_out << std::endl;
       }
-#if !HAVE_SSTREAM
-      os << '\0';
-#endif
       if (! write(client_socket, os.str().c_str(), os.str().length()))
 	  EXIT_ERROR;
 
@@ -378,9 +359,6 @@ static void* host_problem(void* arg) {
             LogActionError(os, "disabled action", params);
             LogActionError(log_out, "disabled action", params);
           }
-#if !HAVE_SSTREAM
-          os << '\0';
-#endif
           if (! write(client_socket, os.str().c_str(), os.str().length()))
 	      EXIT_ERROR;
 
@@ -427,9 +405,6 @@ static void* host_problem(void* arg) {
     os.str("");
     LogEndRound(os, id, round, *s, time_spent, turns_used);
     LogEndRound(log_out, id, round, *s, time_spent, turns_used);
-#if !HAVE_SSTREAM
-    os << '\0';
-#endif
     if (! write(client_socket, os.str().c_str(), os.str().length()))
 	EXIT_ERROR;
 
@@ -443,9 +418,6 @@ static void* host_problem(void* arg) {
                 success_count, total_time, total_turns, total_metric);
   LogEndSession(log_out, id, round - 1, cfg.round_limit,
                 success_count, total_time, total_turns, total_metric);
-#if !HAVE_SSTREAM
-  os << '\0';
-#endif
   if (! write(client_socket, os.str().c_str(), os.str().length()))
       EXIT_ERROR;
 
